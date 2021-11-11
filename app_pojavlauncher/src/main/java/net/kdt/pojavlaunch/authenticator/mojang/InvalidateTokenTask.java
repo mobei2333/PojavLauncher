@@ -1,50 +1,36 @@
 package net.kdt.pojavlaunch.authenticator.mojang;
 
-import android.content.*;
-import android.os.*;
+import android.util.Log;
+
 import net.kdt.pojavlaunch.authenticator.mojang.yggdrasil.*;
-import java.io.*;
-import java.lang.ref.WeakReference;
+
 import java.util.*;
-import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.value.*;
 
-public class InvalidateTokenTask extends AsyncTask<String, Void, Throwable> {
-    private YggdrasilAuthenticator authenticator = new YggdrasilAuthenticator();
-    //private Gson gson = new Gson();
-    private MinecraftAccount profilePath;
+/** Class invalidating tokens for the mojang accounts */
+public class InvalidateTokenTask {
+    private final YggdrasilAuthenticator authenticator = new YggdrasilAuthenticator();
+    private final String accountName;
 
-    private final WeakReference<Context> ctx;
-    private String path;
-
-    public InvalidateTokenTask(Context ctx) {
-        this.ctx = new WeakReference<>(ctx);
+    public InvalidateTokenTask(String accountName){
+        this.accountName = accountName;
     }
 
-    @Override
-    public Throwable doInBackground(String... args) {
-        path = args[0];
-        try {
+    /** Invalidates the token associated to accounts */
+    public void execute() {
+        new Thread(() -> {
+            MinecraftAccount account = MinecraftAccount.load(accountName);
+            // Delete the account file now, if the invalidation fails the token can just expire
+            account.deleteSaveFile();
 
-            
-            this.profilePath = MinecraftAccount.load(args[0]);
-            if (profilePath.accessToken.equals("0")) {
-                return null;
+            if (account.accessToken.equals("0")) return; // Cracked account, no real token
+            try {
+                authenticator.invalidate(account.accessToken,
+                        UUID.fromString(account.isMicrosoft ? account.profileId : account.clientToken));
+            }catch (Throwable e){
+                Log.e("Invalidate Token Task", e.toString());
             }
-            this.authenticator.invalidate(profilePath.accessToken,
-                UUID.fromString(profilePath.isMicrosoft ? profilePath.profileId : profilePath.clientToken /* should be? */));
-            return null;
-        } catch (Throwable e) {
-            return e;
-        }
-    }
-
-    @Override
-    public void onPostExecute(Throwable result) {
-        if (result != null) {
-            Tools.showError(ctx.get(), result);
-        }
-        new File(Tools.DIR_ACCOUNT_NEW + "/" + path + ".json").delete();
+        }).start();
     }
 }
 

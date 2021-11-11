@@ -10,10 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -22,7 +19,6 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,14 +65,12 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class PojavLoginActivity extends BaseActivity
-// MineActivity
-{
+public class PojavLoginActivity extends BaseActivity {
     private final Object mLockStoragePerm = new Object();
     private final Object mLockSelectJRE = new Object();
-    
-    private EditText edit2, edit3;
+
     private final int REQUEST_STORAGE_REQUEST_CODE = 1;
+    private EditText emailEditText, passwordEditText;
     private CheckBox sRemember, sOffline;
     private TextView startupTextView;
     private SharedPreferences firstLaunchPrefs;
@@ -242,14 +236,14 @@ public class PojavLoginActivity extends BaseActivity
             public void onNothingSelected(AdapterView<?> adapter) {}
         });
             
-        edit2 = (EditText) findViewById(R.id.login_edit_email);
-        edit3 = (EditText) findViewById(R.id.login_edit_password);
+        emailEditText = (EditText) findViewById(R.id.login_edit_email);
+        passwordEditText = (EditText) findViewById(R.id.login_edit_password);
         
         sRemember = findViewById(R.id.login_switch_remember);
         sOffline  = findViewById(R.id.login_switch_offline);
         sOffline.setOnCheckedChangeListener((p1, p2) -> {
             // May delete later
-            edit3.setEnabled(!p2);
+            passwordEditText.setEnabled(!p2);
         });
             
         isSkipInit = true;
@@ -558,7 +552,7 @@ public class PojavLoginActivity extends BaseActivity
                     builder2.setTitle(selectedAccName);
                     builder2.setMessage(R.string.warning_remove_account);
                     builder2.setPositiveButton(android.R.string.ok, (p1, p2) -> {
-                        new InvalidateTokenTask(PojavLoginActivity.this).execute(selectedAccName);
+                        new InvalidateTokenTask(selectedAccName).execute();
                         accountListLayout.removeViewsInLayout(accountIndex_final, 1);
 
                         if (accountListLayout.getChildCount() == 0) {
@@ -578,69 +572,41 @@ public class PojavLoginActivity extends BaseActivity
         accountDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         accountDialog.show();
     }
-    
-    private MinecraftAccount loginOffline() {
-        new File(Tools.DIR_ACCOUNT_OLD).mkdir();
-        
-        String text = edit2.getText().toString();
-        if (text.isEmpty()) {
-            edit2.setError(getString(R.string.global_error_field_empty));
-        } else if (text.length() < 3 || text.length() > 16 || !text.matches("\\w+")) {
-            edit2.setError(getString(R.string.login_error_invalid_username));
-        } else if (new File(Tools.DIR_ACCOUNT_NEW + "/" + text + ".json").exists()) {
-            edit2.setError(getString(R.string.login_error_exist_username));
-        } else if (!edit3.getText().toString().isEmpty()) {
-            edit3.setError(getString(R.string.login_error_offline_password));
-        } else {
-            MinecraftAccount builder = new MinecraftAccount();
-            builder.isMicrosoft = false;
-            builder.username = text;
-            
-            return builder;
-        }
-        return null;
-    }
+
     
 
-    public void loginMC(final View v)
-    {
-        
-        if (sOffline.isChecked()) {
-            mProfile = loginOffline();
-            playProfile(false);
-        } else {
-            ProgressBar prb = findViewById(R.id.launcherAccProgress);
-            new LoginTask().setLoginListener(new LoginListener(){
+    public void loginMC(final View v) {
+        ProgressBar prb = findViewById(R.id.launcherAccProgress);
+        new LoginTask().setLoginListener(new LoginListener(){
 
+            @Override
+            public void onBeforeLogin() {
+                v.setEnabled(false);
+                prb.setVisibility(View.VISIBLE);
+            }
 
-                    @Override
-                    public void onBeforeLogin() {
-                        v.setEnabled(false);
-                        prb.setVisibility(View.VISIBLE);
-                    }
+            @Override
+            public void onLoginDone(String[] result) {
+                if(result[0].equals("ERROR")){
+                    Tools.dialogOnUiThread(PojavLoginActivity.this,
+                        getResources().getString(R.string.global_error), strArrToString(result));
+                } else{
+                    MinecraftAccount builder = new MinecraftAccount();
+                    builder.accessToken = result[1];
+                    builder.clientToken = result[2];
+                    builder.profileId = result[3];
+                    builder.username = result[4];
+                    builder.updateSkinFace();
+                    mProfile = builder;
+                }
+                runOnUiThread(() -> {
+                    v.setEnabled(true);
+                    prb.setVisibility(View.GONE);
+                    playProfile(false);
+                });
+            }
+        }).execute(emailEditText.getText().toString(), passwordEditText.getText().toString());
 
-                    @Override
-                    public void onLoginDone(String[] result) {
-                        if(result[0].equals("ERROR")){
-                            Tools.dialogOnUiThread(PojavLoginActivity.this,
-                                getResources().getString(R.string.global_error), strArrToString(result));
-                        } else{
-                            MinecraftAccount builder = new MinecraftAccount();
-                            builder.accessToken = result[1];
-                            builder.clientToken = result[2];
-                            builder.profileId = result[3];
-                            builder.username = result[4];
-                            builder.updateSkinFace();
-                            mProfile = builder;
-                        }
-                        runOnUiThread(() -> {
-                            v.setEnabled(true);
-                            prb.setVisibility(View.GONE);
-                            playProfile(false);
-                        });
-                    }
-                }).execute(edit2.getText().toString(), edit3.getText().toString());
-        }
     }
     
     private void playProfile(boolean notOnLogin) {
@@ -690,7 +656,8 @@ public class PojavLoginActivity extends BaseActivity
     // This method will be called when the user will tap on allow or deny
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_STORAGE_REQUEST_CODE){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_STORAGE_REQUEST_CODE) {
             synchronized (mLockStoragePerm) {
                 mLockStoragePerm.notifyAll();
             }
@@ -699,13 +666,7 @@ public class PojavLoginActivity extends BaseActivity
 
     //When the user have no saved account, you can show him this dialog
     private void showNoAccountDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(PojavLoginActivity.this);
-
-        builder.setMessage(R.string.login_dialog_no_saved_account)
-                .setTitle(R.string.login_title_no_saved_account)
-                .setPositiveButton(android.R.string.ok, null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        Tools.dialogOnUiThread(this, R.string.login_title_no_saved_account, R.string.login_dialog_no_saved_account);
     }
 
 }
