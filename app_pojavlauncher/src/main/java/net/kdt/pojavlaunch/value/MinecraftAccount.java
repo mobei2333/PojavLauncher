@@ -48,6 +48,10 @@ public class MinecraftAccount
     public String save() throws IOException {
         return save(Tools.DIR_ACCOUNT_NEW + "/" + username + ".json");
     }
+
+    public boolean deleteSaveFile(){
+        return new File(Tools.DIR_ACCOUNT_NEW + "/" + username + ".json").delete();
+    }
     
     public static MinecraftAccount parse(String content) throws JsonSyntaxException {
         return Tools.GLOBAL_GSON.fromJson(content, MinecraftAccount.class);
