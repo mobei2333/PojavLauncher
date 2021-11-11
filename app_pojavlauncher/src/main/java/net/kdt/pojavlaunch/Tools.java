@@ -473,6 +473,10 @@ public final class Tools {
         }
     }
 
+    public static void dialogOnUiThread(final Activity ctx, final int titleID, final int messageID){
+        dialogOnUiThread(ctx, ctx.getResources().getString(titleID), ctx.getResources().getString(messageID));
+    }
+
     public static void dialogOnUiThread(final Activity ctx, final CharSequence title, final CharSequence message) {
         ctx.runOnUiThread(() -> new AlertDialog.Builder(ctx)
             .setTitle(title)
