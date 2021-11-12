@@ -13,6 +13,7 @@ import android.widget.AdapterView.*;
 import java.io.*;
 import java.util.*;
 import net.kdt.pojavlaunch.*;
+import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.RTSpinnerAdapter;
 import net.kdt.pojavlaunch.prefs.*;
@@ -21,98 +22,38 @@ import net.kdt.pojavlaunch.value.PerVersionConfig;
 
 import androidx.appcompat.widget.PopupMenu;
 
-public class RefreshVersionListTask extends AsyncTask<Void, Void, ArrayList<String>>
-{
-    private BaseLauncherActivity mActivity;
-    public RefreshVersionListTask(BaseLauncherActivity activity) {
-        mActivity = activity;
-    }
-    
-    @Override
-    protected ArrayList<String> doInBackground(Void[] p1)
-    {
-        try {
-            //mActivity.mVersionList = Tools.GLOBAL_GSON.fromJson(DownloadUtils.downloadString(""), JMinecraftVersionList.class);
-            {
-                ArrayList<JMinecraftVersionList.Version> versions = new ArrayList<>();
-                String[] repositories = LauncherPreferences.PREF_VERSION_REPOS.split(";");
-                for (String url : repositories) {
-                    JMinecraftVersionList list;
-                    Log.i("ExtVL", "Syncing to external: " + url);
+/** Class refreshing the version list via ExtraCore */
+public class RefreshVersionListTask {
+
+    /** Get all versions */
+    public void execute(){
+        new Thread(() -> {
+            ArrayList<JMinecraftVersionList.Version> versions = new ArrayList<>();
+            String[] repositories = LauncherPreferences.PREF_VERSION_REPOS.split(";");
+            for (String url : repositories) {
+                JMinecraftVersionList list;
+                Log.i("ExtVL", "Syncing to external: " + url);
+                try {
                     list = Tools.GLOBAL_GSON.fromJson(DownloadUtils.downloadString(url), JMinecraftVersionList.class);
                     Log.i("ExtVL","Downloaded the version list, len="+list.versions.length);
                     Collections.addAll(versions,list.versions);
-                }
-                mActivity.mVersionList = new JMinecraftVersionList();
-                mActivity.mVersionList.versions = versions.toArray(new JMinecraftVersionList.Version[versions.size()]);
-                Log.i("ExtVL","Final list size: " + mActivity.mVersionList.versions.length);
+                }catch (IOException e) {e.printStackTrace();}
             }
-            ArrayList<String> versionStringList = filter(mActivity.mVersionList.versions, new File(Tools.DIR_HOME_VERSION).listFiles());
 
-            return versionStringList;
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
+            // Put all versions into a single version list
+            JMinecraftVersionList full_list = new JMinecraftVersionList();
+            full_list.versions = versions.toArray(new JMinecraftVersionList.Version[0]);
+
+            //Add the version list to the ExtraCore
+            ExtraCore.setValue("version_list_object", full_list);
+            ExtraCore.setValue("version_list_string", filter(full_list.versions, new File(Tools.DIR_HOME_VERSION).listFiles()));
+        }).start();
     }
 
-    @Override
-    protected void onPostExecute(ArrayList<String> result)
-    {
-        super.onPostExecute(result);
-        final PopupMenu popup = new PopupMenu(mActivity, mActivity.mVersionSelector);  
-        popup.getMenuInflater().inflate(R.menu.menu_versionopt, popup.getMenu());  
 
-        if(result != null && result.size() > 0) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, result);
-            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-            mActivity.mVersionSelector.setAdapter(adapter);
-            mActivity.mVersionSelector.setSelection(selectAt(result.toArray(new String[0]), mActivity.mProfile.selectedVersion));
-        } else {
-            mActivity.mVersionSelector.setSelection(selectAt(mActivity.mAvailableVersions, mActivity.mProfile.selectedVersion));
-        }
-        PerVersionConfigDialog dialog = new PerVersionConfigDialog(this.mActivity);
-        mActivity.mVersionSelector.setOnLongClickListener((v)->dialog.openConfig(mActivity.mProfile.selectedVersion));
-        mActivity.mVersionSelector.setOnItemSelectedListener(new OnItemSelectedListener(){
-                @Override
-                public void onItemSelected(AdapterView<?> p1, View p2, int p3, long p4)
-                {
-                    mActivity.mProfile.selectedVersion = p1.getItemAtPosition(p3).toString();
-
-                    PojavProfile.setCurrentProfile(mActivity, mActivity.mProfile);
-                    if (PojavProfile.isFileType(mActivity)) {
-                        try {
-                            PojavProfile.setCurrentProfile(mActivity, mActivity.mProfile.save());
-                        } catch (IOException e) {
-                            Tools.showError(mActivity, e);
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> p1)
-                {
-                    // TODO: Implement this method
-                }
-            });
-        /*mActivity.mVersionSelector.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-                @Override
-                public boolean onItemLongClick(AdapterView<?> p1, View p2, int p3, long p4)
-                {
-                    // Implement copy, remove, reinstall,...
-
-
-                    return true;
-                }
-            });
-        */
-        popup.setOnMenuItemClickListener(item -> true);
-
-    }
     
     private ArrayList<String> filter(JMinecraftVersionList.Version[] list1, File[] list2) {
-        ArrayList<String> output = new ArrayList<String>();
+        ArrayList<String> output = new ArrayList<>();
 
         for (JMinecraftVersionList.Version value1: list1) {
             if ((value1.type.equals("release") && LauncherPreferences.PREF_VERTYPE_RELEASE) ||
@@ -132,15 +73,4 @@ public class RefreshVersionListTask extends AsyncTask<Void, Void, ArrayList<Stri
 
         return output;
     }
-    
-    private int selectAt(String[] strArr, String select) {
-        int count = 0;
-        for(String str : strArr){
-            if (str.equals(select)) {
-                return count;
-            }
-            count++;
-        }
-        return -1;
-	}
 }

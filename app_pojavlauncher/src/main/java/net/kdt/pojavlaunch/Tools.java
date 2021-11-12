@@ -526,7 +526,7 @@ public final class Tools {
         return libDir.toArray(new String[0]);
     }
 
-    public static JMinecraftVersionList.Version getVersionInfo(BaseLauncherActivity bla, String versionName) {
+    public static JMinecraftVersionList.Version getVersionInfo(PojavLauncherActivity bla, String versionName) {
         try {
             JMinecraftVersionList.Version customVer = Tools.GLOBAL_GSON.fromJson(read(DIR_HOME_VERSION + "/" + versionName + "/" + versionName + ".json"), JMinecraftVersionList.Version.class);
             for (DependentLibrary lib : customVer.libraries) {

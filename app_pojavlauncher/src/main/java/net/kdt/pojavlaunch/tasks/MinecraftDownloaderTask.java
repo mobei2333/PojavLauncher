@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinecraftDownloaderTask extends AsyncTask<String, String, Throwable>
  {
-    private BaseLauncherActivity mActivity;
+    private PojavLauncherActivity mActivity;
     private boolean launchWithError = false;
     MinecraftDownloaderTask thiz = this;
-    public MinecraftDownloaderTask(BaseLauncherActivity activity) {
+    public MinecraftDownloaderTask(PojavLauncherActivity activity) {
         mActivity = activity;
     }
     

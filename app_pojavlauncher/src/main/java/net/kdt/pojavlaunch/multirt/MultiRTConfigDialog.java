@@ -8,7 +8,7 @@ import android.webkit.MimeTypeMap;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.kdt.pojavlaunch.BaseLauncherActivity;
+import net.kdt.pojavlaunch.PojavLauncherActivity;
 import net.kdt.pojavlaunch.R;
 
 public class MultiRTConfigDialog {
@@ -16,7 +16,7 @@ public class MultiRTConfigDialog {
     public static final int MULTIRT_PICK_RUNTIME_STARTUP = 2049;
     public AlertDialog dialog;
     public RecyclerView dialogView;
-    public void prepare(BaseLauncherActivity ctx) {
+    public void prepare(PojavLauncherActivity ctx) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setTitle(R.string.multirt_config_title);
         dialogView = new RecyclerView(ctx);
