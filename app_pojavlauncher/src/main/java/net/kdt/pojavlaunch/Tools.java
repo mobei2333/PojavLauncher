@@ -120,9 +120,9 @@ public final class Tools {
 
         JMinecraftVersionList.Version versionInfo = Tools.getVersionInfo(null,versionName);
         String gamedirPath = Tools.DIR_GAME_NEW;
-            if(activity instanceof BaseMainActivity) {
+            if(activity instanceof MainActivity) {
                 LauncherProfiles.update();
-                MinecraftProfile minecraftProfile = ((BaseMainActivity)activity).minecraftProfile;
+                MinecraftProfile minecraftProfile = ((MainActivity)activity).minecraftProfile;
                 if(minecraftProfile == null) throw new Exception("Launching empty Profile");
                 if(minecraftProfile.gameDir != null && minecraftProfile.gameDir.startsWith(Tools.LAUNCHERPROFILES_RTPREFIX))
                     gamedirPath = minecraftProfile.gameDir.replace(Tools.LAUNCHERPROFILES_RTPREFIX,Tools.DIR_GAME_HOME+"/");

@@ -212,7 +212,7 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
     }
 
     public void forceClose(View v) {
-        BaseMainActivity.dialogForceClose(this);
+        MainActivity.dialogForceClose(this);
     }
 
     public void openLogOutput(View v) {
