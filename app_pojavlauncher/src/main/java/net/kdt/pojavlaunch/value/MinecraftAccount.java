@@ -26,7 +26,7 @@ public class MinecraftAccount
     void updateSkinFace(String uuid) {
         try {
             File skinFile = File.createTempFile("skin", ".png", new File(Tools.DIR_DATA, "cache"));
-            Tools.downloadFile("https://mc-heads.net/head/" + uuid + "/100", skinFile.getAbsolutePath());
+            Tools.downloadFile("https://mc-heads.net/head/" + uuid + "/60", skinFile.getAbsolutePath());
             skinFaceBase64 = Base64.encodeToString(IOUtils.toByteArray(new FileInputStream(skinFile)), Base64.DEFAULT);
             
             Log.i("SkinLoader", "Update skin face success");

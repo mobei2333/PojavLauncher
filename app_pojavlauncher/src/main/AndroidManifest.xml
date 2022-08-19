@@ -26,19 +26,7 @@
         <meta-data 
             android:name="android.max_aspect"
             android:value="ratio_float"/>
-		
-        <activity
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="sensorLandscape"
-            android:label="@string/app_short_name"
-            android:name=".PojavLoginActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
 
         <activity android:name=".ImportControlActivity"
             android:exported="true"
@@ -70,9 +58,17 @@
             android:name=".ExitActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"/>
         <activity
-            android:screenOrientation="sensorLandscape"
-            android:name=".PojavLauncherActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"/>
+            android:exported="true"
+            android:name=".LauncherActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"
+            android:launchMode="singleTop">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
         
         <activity
             android:screenOrientation="sensorLandscape"
@@ -83,9 +79,6 @@
             android:screenOrientation="sensorLandscape"
             android:name=".CustomControlsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"/>
-        <activity
-            android:screenOrientation="sensorLandscape"
-            android:name=".authenticator.microsoft.ui.MicrosoftLoginGUIActivity"/>
         <activity
             android:launchMode="standard"
             android:multiprocess="true"

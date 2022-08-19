@@ -28,7 +28,7 @@
 		android:textStyle="bold"
 
 		android:visibility="visible"
-		app:drawableBottomCompat="@drawable/ic_menu_no_news"
+
 		tools:visibility="visible" />
 
 </LinearLayout>

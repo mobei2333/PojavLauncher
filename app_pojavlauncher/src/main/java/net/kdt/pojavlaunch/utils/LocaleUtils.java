@@ -1,6 +1,5 @@
 package net.kdt.pojavlaunch.utils;
 
-import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_LANGUAGE;
 
 import android.content.*;
 import android.content.res.*;
@@ -12,8 +11,6 @@ import net.kdt.pojavlaunch.prefs.*;
 
 public class LocaleUtils {
 
-    private static Locale CURRENT_LOCALE;
-
     public static Locale getLocale(){
         return Locale.getDefault();
     }
@@ -24,35 +21,21 @@ public class LocaleUtils {
             LauncherPreferences.loadPreferences(context);
         }
 
+        if(LauncherPreferences.PREF_FORCE_ENGLISH) {
+            Locale CURRENT_LOCALE = Locale.ENGLISH;
 
-        if (LauncherPreferences.PREF_LANGUAGE.equals("default")) {
-            CURRENT_LOCALE = getLocale();
-        } else {
-            if(CURRENT_LOCALE == null || !PREF_LANGUAGE.equalsIgnoreCase(CURRENT_LOCALE.toString())){
-                String[] localeString;
-                if(PREF_LANGUAGE.contains("_")){
-                    localeString = PREF_LANGUAGE.split("_");
-                }else{
-                    localeString = new String[]{PREF_LANGUAGE, ""};
-                }
-                CURRENT_LOCALE = new Locale(localeString[0], localeString[1]);
+            Locale.setDefault(CURRENT_LOCALE);
+
+            Resources res = context.getResources();
+            Configuration config = res.getConfiguration();
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                config.setLocale(CURRENT_LOCALE);
+                context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+            } else {
+                config.locale = CURRENT_LOCALE;
+                context.getApplicationContext().createConfigurationContext(config);
             }
-
-        }
-
-
-        
-        Locale.setDefault(CURRENT_LOCALE);
-
-        Resources res = context.getResources();
-        Configuration config = res.getConfiguration();
-
-        if (Build.VERSION.SDK_INT >= 24) {
-            config.setLocale(CURRENT_LOCALE);
-            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
-        } else {
-            config.locale = CURRENT_LOCALE;
-            context.getApplicationContext().createConfigurationContext(config);
         }
 
         return context;

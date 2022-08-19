@@ -5,7 +5,6 @@ import android.graphics.*;
 import android.text.*;
 import android.util.*;
 import android.view.*;
-import android.widget.RelativeLayout;
 
 import java.util.*;
 import net.kdt.pojavlaunch.utils.*;
