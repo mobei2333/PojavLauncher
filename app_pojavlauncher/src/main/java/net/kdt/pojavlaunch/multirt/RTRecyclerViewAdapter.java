@@ -54,7 +54,7 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
     public void setDefault(Runtime rt){
         LauncherPreferences.PREF_DEFAULT_RUNTIME = rt.name;
         LauncherPreferences.DEFAULT_PREF.edit().putString("defaultRuntime",LauncherPreferences.PREF_DEFAULT_RUNTIME).apply();
-        RTRecyclerViewAdapter.this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
 
@@ -106,8 +106,7 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
                     view.post(() -> {
                         if(isDefaultRuntime(mCurrentRuntime)) setDefault(MultiRTUtils.getRuntimes().get(0));
                         barrier.dismiss();
-                        RTRecyclerViewAdapter.this.notifyDataSetChanged();
-                        mConfigDialog.mDialog.show();
+                        mConfigDialog.show();
                     });
                 });
                 t.start();
@@ -124,7 +123,9 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
             mCurrentRuntime = runtime;
             mCurrentPosition = pos;
             if(runtime.versionString != null && Tools.DEVICE_ARCHITECTURE == Architecture.archAsInt(runtime.arch)) {
-                mJavaVersionTextView.setText(mContext.getString(R.string.multirt_java_ver, runtime.name, runtime.javaVersion));
+                mJavaVersionTextView.setText(runtime.name
+                        .replace(".tar.xz", "")
+                        .replace("-", " "));
                 mFullJavaVersionTextView.setText(runtime.versionString);
                 mFullJavaVersionTextView.setTextColor(mDefaultColors);
                 mSetDefaultButton.setVisibility(View.VISIBLE);
