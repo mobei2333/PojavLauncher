@@ -14,15 +14,8 @@
             />
 
         <SwitchPreference
-            android:defaultValue="false"
-            android:key="hideSidebar"
-            android:summary="@string/mcl_setting_subtitle_hide_sidebar"
-            android:title="@string/mcl_setting_title_hide_sidebar"
-            app2:icon="@drawable/ic_setting_hide_sidebar" />
-
-        <SwitchPreference
             android:defaultValue="true"
-            android:icon="@drawable/ic_setting_lib_check"
+
             android:key="checkLibraries"
             android:summary="@string/mcl_setting_check_libraries_subtitle"
             android:title="@string/mcl_setting_check_libraries" />
@@ -31,31 +24,6 @@
             android:key="arc_capes"
             android:summary="@string/arc_capes_desc"
             android:title="@string/arc_capes_title" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/mcl_setting_category_veroption">
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="vertype_release"
-            android:title="@string/mcl_setting_veroption_release" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="vertype_snapshot"
-            android:title="@string/mcl_setting_veroption_snapshot" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="vertype_oldalpha"
-            android:title="@string/mcl_setting_veroption_oldalpha" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="vertype_oldbeta"
-            android:title="@string/mcl_setting_veroption_oldbeta" />
 
     </PreferenceCategory>
 

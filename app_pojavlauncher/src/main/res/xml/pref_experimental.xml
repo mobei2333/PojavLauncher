@@ -4,13 +4,5 @@
     <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
     <PreferenceCategory android:title="Experimental fuckury">
 
-        <androidx.preference.ListPreference
-            android:title="@string/gles_hack_title"
-            android:key="gl4es_shrink_hack"
-            android:defaultValue="0"
-            android:entryValues="@array/hack_gles_shrink_values"
-            android:entries="@array/hack_gles_shrink"
-            app2:useSimpleSummaryProvider="true"/>
-
     </PreferenceCategory>
 </PreferenceScreen>
