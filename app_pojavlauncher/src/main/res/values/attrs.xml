@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExtendedView">
+        <attr name="drawableStartIntegerScaling" format="boolean"/>
+        <attr name="drawableTopIntegerScaling" format="boolean"/>
+        <attr name="drawableEndIntegerScaling" format="boolean"/>
+        <attr name="drawableBottomIntegerScaling" format="boolean"/>
+
+        <attr name="drawableStartSize" format="dimension"/>
+        <attr name="drawableTopSize" format="dimension"/>
+        <attr name="drawableEndSize" format="dimension"/>
+        <attr name="drawableBottomSize" format="dimension"/>
+
+        <attr name="drawableStartPadding" format="dimension"/>
+        <attr name="drawableTopPadding" format="dimension"/>
+        <attr name="drawableEndPadding" format="dimension"/>
+        <attr name="drawableBottomPadding" format="dimension"/>
+    </declare-styleable>
+    
+    <declare-styleable name="ExtendedSpinner">
+        <attr name="drawableStart" format="reference"/>
+    </declare-styleable>
+
+</resources>
