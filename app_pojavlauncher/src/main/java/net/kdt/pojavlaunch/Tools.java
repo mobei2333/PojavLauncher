@@ -157,7 +157,7 @@ public final class Tools {
 */
 
         if (versionInfo.logging != null) {
-            String configFile = Tools.DIR_DATA + "/" + versionInfo.logging.client.file.id.replace("client", "log4j-rce-patch");
+            String configFile = Tools.DIR_DATA + "/security/" + versionInfo.logging.client.file.id.replace("client", "log4j-rce-patch");
             if (!new File(configFile).exists()) {
                 configFile = Tools.DIR_GAME_NEW + "/" + versionInfo.logging.client.file.id;
             }
