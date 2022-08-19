@@ -22,7 +22,6 @@ public class LauncherPreferences {
 	public static int PREF_LONGPRESS_TRIGGER = 300;
 	public static String PREF_DEFAULTCTRL_PATH = Tools.CTRLDEF_FILE;
 	public static String PREF_CUSTOM_JAVA_ARGS;
-    public static String PREF_LANGUAGE = "default";
     public static String PREF_VERSION_REPOS = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
     public static boolean PREF_CHECK_LIBRARY_SHA = true;
     public static boolean PREF_DISABLE_GESTURES = false;
@@ -38,6 +37,7 @@ public class LauncherPreferences {
     public static boolean PREF_ARC_CAPES = false;
     public static boolean PREF_USE_ALTERNATE_SURFACE = true;
     public static int PREF_SCALE_FACTOR = 100;
+    public static boolean PREF_FORCE_ENGLISH = false;
 
 
     public static void loadPreferences(Context ctx) {
@@ -57,7 +57,7 @@ public class LauncherPreferences {
 		PREF_VERTYPE_OLDBETA = DEFAULT_PREF.getBoolean("vertype_oldbeta", false);
 		PREF_LONGPRESS_TRIGGER = DEFAULT_PREF.getInt("timeLongPressTrigger", 300);
 		PREF_DEFAULTCTRL_PATH = DEFAULT_PREF.getString("defaultCtrl", Tools.CTRLDEF_FILE);
-        PREF_LANGUAGE = DEFAULT_PREF.getString("language", "default");
+        PREF_FORCE_ENGLISH = DEFAULT_PREF.getBoolean("force_english", false);
         PREF_CHECK_LIBRARY_SHA = DEFAULT_PREF.getBoolean("checkLibraries",true);
         PREF_DISABLE_GESTURES = DEFAULT_PREF.getBoolean("disableGestures",false);
         PREF_RAM_ALLOCATION = DEFAULT_PREF.getInt("allocation", findBestRAMAllocation(ctx));
@@ -105,7 +105,7 @@ public class LauncherPreferences {
             if (arg.startsWith(argLwjglLibname)) {
                 // purge arg
                 DEFAULT_PREF.edit().putString("javaArgs",
-                    PREF_CUSTOM_JAVA_ARGS.replace(arg, "")).commit();
+                    PREF_CUSTOM_JAVA_ARGS.replace(arg, "")).apply();
             }
         }
         if(DEFAULT_PREF.contains("defaultRuntime")) {
