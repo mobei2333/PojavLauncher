@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.prefs.screens;
+package net.kdt.pojavlaunch.prefs.screens.settings;
 
 
 import android.graphics.Color;
@@ -27,7 +27,7 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        view.setBackgroundColor(Color.parseColor("#232323"));
+        view.setBackgroundColor(view.getContext().getResources().getColor(R.color.background_app));
         super.onViewCreated(view, savedInstanceState);
     }
 

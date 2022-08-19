@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.prefs.screens;
+package net.kdt.pojavlaunch.prefs.screens.settings;
 
 import android.os.Bundle;
 
