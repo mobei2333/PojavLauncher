@@ -61,6 +61,7 @@ public final class ExtraCore {
         }
     }
 
+
     /** @return The value behind the key */
     public static Object getValue(String key){
         return getInstance().mValueMap.get(key);
@@ -69,6 +70,12 @@ public final class ExtraCore {
     /** Remove the key and its value from the valueMap */
     public static void removeValue(String key){
         getInstance().mValueMap.remove(key);
+    }
+
+    public static Object consumeValue(String key){
+        Object value = getInstance().mValueMap.get(key);
+        getInstance().mValueMap.remove(key);
+        return value;
     }
 
     /** Remove all values */
