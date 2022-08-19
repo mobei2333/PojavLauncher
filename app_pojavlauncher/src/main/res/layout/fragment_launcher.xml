@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/fragment_menu_main"
+	android:gravity="top"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:background="@color/background_app"
+	>
+
+	<com.kdt.mcgui.LauncherMenuButton
+		android:id="@+id/news_button"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_66sdp"
+		android:background="?android:attr/selectableItemBackground"
+
+		android:text="@string/mcl_tab_news"
+		android:drawableStart="@drawable/ic_menu_news"
+		/>
+
+	<com.kdt.mcgui.LauncherMenuButton
+		android:id="@+id/custom_control_button"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_66sdp"
+		android:background="?android:attr/selectableItemBackground"
+		android:drawableStart="@drawable/ic_menu_custom_controls"
+		android:text="@string/mcl_option_customcontrol"
+
+		/>
+
+	<com.kdt.mcgui.LauncherMenuButton
+		android:id="@+id/install_jar_button"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_66sdp"
+		android:background="?android:attr/selectableItemBackground"
+		android:drawableStart="@drawable/ic_menu_install_jar"
+		android:text="@string/main_install_jar_file"
+		/>
+
+	<com.kdt.mcgui.LauncherMenuButton
+		android:id="@+id/edit_profile_button"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_66sdp"
+		android:background="?android:attr/selectableItemBackground"
+		android:drawableStart="@drawable/ic_edit_profile"
+		android:text="EDIT SELECTED PROFILE"
+		/>
+
+</LinearLayout>
+
