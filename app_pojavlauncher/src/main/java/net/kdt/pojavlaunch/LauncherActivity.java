@@ -47,7 +47,6 @@ public class LauncherActivity extends BaseActivity {
     private FragmentContainerView mFragmentView;
     private ImageButton mSettingsButton, mDeleteAccountButton;
     private Button mPlayButton;
-    private ProgressBar mProgressBar;
 
 
     /* Listener for the back button in settings */
@@ -56,11 +55,6 @@ public class LauncherActivity extends BaseActivity {
         return false;
     };
 
-    private final ExtraListener mProgressListener = (key, value) -> {
-        int progress = (int) value;
-        mProgressBar.incrementProgressBy(progress - mProgressBar.getProgress());
-        return false;
-    };
 
     private final ExtraListener<String> mRefreshVersion = (key, value) -> {
         mVersionSpinner.getProfileAdapter().notifyDataSetChanged();
@@ -108,8 +102,6 @@ public class LauncherActivity extends BaseActivity {
         ExtraCore.addExtraListener(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.addExtraListener(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
         ExtraCore.addExtraListener(ExtraConstants.REFRESH_VERSION_SPINNER, mRefreshVersion);
-        ExtraCore.addExtraListener(ExtraConstants.PROGRESS_BAR_VALUE, mProgressListener);
-
 
         AsyncAssetManager manager = new AsyncAssetManager();
         manager.unpackRuntime(this.getAssets(), false);
@@ -143,8 +135,6 @@ public class LauncherActivity extends BaseActivity {
             }));
         });
 
-
-
     }
 
     @Override
@@ -153,7 +143,6 @@ public class LauncherActivity extends BaseActivity {
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.REFRESH_VERSION_SPINNER, mRefreshVersion);
-        ExtraCore.removeExtraListenerFromValue(ExtraConstants.PROGRESS_BAR_VALUE, mProgressListener);
     }
 
     @Override
@@ -201,7 +190,6 @@ public class LauncherActivity extends BaseActivity {
         mDeleteAccountButton = findViewById(R.id.delete_account_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
         mPlayButton = findViewById(R.id.play_button);
-        mProgressBar = findViewById(R.id.launcher_progress_bar);
     }
 
 
