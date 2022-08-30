@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
+import com.kdt.mcgui.ProgressLayout;
 import com.kdt.mcgui.mcAccountSpinner;
 import com.kdt.mcgui.mcVersionSpinner;
 
@@ -47,6 +49,7 @@ public class LauncherActivity extends BaseActivity {
     private FragmentContainerView mFragmentView;
     private ImageButton mSettingsButton, mDeleteAccountButton;
     private Button mPlayButton;
+    private ProgressLayout mProgressLayout;
 
 
     /* Listener for the back button in settings */
@@ -114,6 +117,11 @@ public class LauncherActivity extends BaseActivity {
 
 
         mPlayButton.setOnClickListener(v -> {
+            if(mProgressLayout.hasProcesses()){
+                Toast.makeText(this, "Tasks are in progress, please wait", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
             if (LauncherProfiles.mainProfileJson == null
                     || LauncherProfiles.mainProfileJson.profiles == null
@@ -135,6 +143,9 @@ public class LauncherActivity extends BaseActivity {
             }));
         });
 
+
+        mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
+        mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
     }
 
     @Override
@@ -190,6 +201,7 @@ public class LauncherActivity extends BaseActivity {
         mDeleteAccountButton = findViewById(R.id.delete_account_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
         mPlayButton = findViewById(R.id.play_button);
+        mProgressLayout = findViewById(R.id.progress_layout);
     }
 
 
