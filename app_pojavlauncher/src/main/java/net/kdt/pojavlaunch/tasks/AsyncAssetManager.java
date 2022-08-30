@@ -37,7 +37,6 @@ public class AsyncAssetManager {
         mHandlerThread.start();
 
         mHandler = new Handler(mHandlerThread.getLooper());
-
     }
 
 
@@ -67,13 +66,7 @@ public class AsyncAssetManager {
                 MultiRTUtils.installRuntimeNamedBinpack(
                         am.open("components/jre/universal.tar.xz"),
                         am.open("components/jre/bin-" + archAsString(Tools.DEVICE_ARCHITECTURE) + ".tar.xz"),
-                        "Internal", finalRt_version,
-                        new MultiRTUtils.RuntimeProgressReporter() {
-                            @Override
-                            public void reportStringProgress(int resId, Object... stuff) {
-                                //TODO do something
-                            }
-                        });
+                        "Internal", finalRt_version);
                 MultiRTUtils.postPrepare("Internal");
             }catch (IOException e) {
                 Log.e("JREAuto", "Internal JRE unpack failed", e);
@@ -85,7 +78,6 @@ public class AsyncAssetManager {
 
     /** Unpack single files, with no regard to version tracking */
     public void unpackSingleFiles(Context ctx){
-        //TODO bundle into a component folder ?
         mHandler.post(() -> {
             try {
                 Tools.copyAssetFile(ctx, "options.txt", Tools.DIR_GAME_NEW, false);

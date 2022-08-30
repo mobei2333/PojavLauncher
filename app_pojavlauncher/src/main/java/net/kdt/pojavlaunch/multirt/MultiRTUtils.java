@@ -7,6 +7,8 @@ import android.content.Context;
 import android.system.Os;
 import android.util.Log;
 
+import com.kdt.mcgui.ProgressLayout;
+
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.JREUtils;
@@ -81,7 +83,7 @@ public class MultiRTUtils {
         if(dest.exists()) FileUtils.deleteDirectory(dest);
         dest.mkdirs();
 
-        uncompressTarXZ(runtimeInputStream,dest,progressReporter);
+        uncompressTarXZ(runtimeInputStream,dest);
         runtimeInputStream.close();
         unpack200(nativeLibDir,RUNTIME_FOLDER + "/" + name);
         read(name);
@@ -103,12 +105,12 @@ public class MultiRTUtils {
         copyDummyNativeLib("libawt_xawt.so", dest, libFolder);
     }
 
-    public static Runtime installRuntimeNamedBinpack(InputStream universalFileInputStream, InputStream platformBinsInputStream, String name, String binpackVersion, RuntimeProgressReporter thingy) throws IOException {
+    public static Runtime installRuntimeNamedBinpack(InputStream universalFileInputStream, InputStream platformBinsInputStream, String name, String binpackVersion) throws IOException {
         File dest = new File(RUNTIME_FOLDER,"/"+name);
         if(dest.exists()) FileUtils.deleteDirectory(dest);
         dest.mkdirs();
-        installRuntimeNamedNoRemove(universalFileInputStream,dest,thingy);
-        installRuntimeNamedNoRemove(platformBinsInputStream,dest,thingy);
+        installRuntimeNamedNoRemove(universalFileInputStream,dest);
+        installRuntimeNamedNoRemove(platformBinsInputStream,dest);
 
         unpack200(NATIVE_LIB_DIR,RUNTIME_FOLDER + "/" + name);
 
@@ -226,13 +228,12 @@ public class MultiRTUtils {
         os.close();
     }
 
-    private static void installRuntimeNamedNoRemove(InputStream runtimeInputStream, File dest, RuntimeProgressReporter progressReporter) throws IOException {
-
-        uncompressTarXZ(runtimeInputStream,dest,progressReporter);
+    private static void installRuntimeNamedNoRemove(InputStream runtimeInputStream, File dest) throws IOException {
+        uncompressTarXZ(runtimeInputStream,dest);
         runtimeInputStream.close();
     }
 
-    private static void uncompressTarXZ(final InputStream tarFileInputStream, final File dest, final RuntimeProgressReporter thingy) throws IOException {
+    private static void uncompressTarXZ(final InputStream tarFileInputStream, final File dest) throws IOException {
         dest.mkdirs();
 
         byte[] buffer = new byte[8192];
@@ -245,7 +246,8 @@ public class MultiRTUtils {
 
             final String tarEntryName = tarEntry.getName();
             // publishProgress(null, "Unpacking " + tarEntry.getName());
-            thingy.reportStringProgress(R.string.global_unpacking,tarEntryName);
+            ProgressLayout.setProgress(ProgressLayout.UNPACK_RUNTIME, 100, R.string.global_unpacking, tarEntryName);
+
             File destPath = new File(dest, tarEntry.getName());
             if (tarEntry.isSymbolicLink()) {
                 destPath.getParentFile().mkdirs();

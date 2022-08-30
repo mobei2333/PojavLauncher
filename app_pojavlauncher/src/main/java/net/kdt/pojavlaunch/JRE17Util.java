@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class JRE17Util {
     public static final String NEW_JRE_NAME = "Internal-17";
-    public static boolean checkInternalNewJre(AssetManager assetManager, MultiRTUtils.RuntimeProgressReporter reporter) {
+    public static boolean checkInternalNewJre(AssetManager assetManager) {
         String launcher_jre17_version;
         String installed_jre17_version = MultiRTUtils.__internal__readBinpackVersion(NEW_JRE_NAME);
         try {
@@ -29,16 +29,16 @@ public class JRE17Util {
             //if we don't -> return false -> Cannot find compatible Java runtime
         }
         if(!launcher_jre17_version.equals(installed_jre17_version))  // this implicitly checks for null, so it will unpack the runtime even if we don't have one installed
-            return unpackJre17(assetManager, launcher_jre17_version, reporter);
+            return unpackJre17(assetManager, launcher_jre17_version);
         else return true;
     }
     
-    private static boolean unpackJre17(AssetManager assetManager, String rt_version, MultiRTUtils.RuntimeProgressReporter feedback) {
+    private static boolean unpackJre17(AssetManager assetManager, String rt_version) {
         try {
             MultiRTUtils.installRuntimeNamedBinpack(
                     assetManager.open("components/jre-new/universal.tar.xz"),
                     assetManager.open("components/jre-new/bin-" + archAsString(Tools.DEVICE_ARCHITECTURE) + ".tar.xz"),
-                    "Internal-17", rt_version, feedback);
+                    "Internal-17", rt_version);
             MultiRTUtils.postPrepare("Internal-17");
             return true;
         }catch (IOException e) {
@@ -71,22 +71,13 @@ public class JRE17Util {
         String appropriateRuntime = MultiRTUtils.getNearestJreName(versionInfo.javaVersion.majorVersion);
         if (appropriateRuntime != null) {
             if (JRE17Util.isInternalNewJRE(appropriateRuntime)) {
-                JRE17Util.checkInternalNewJre(activity.getAssets(), new MultiRTUtils.RuntimeProgressReporter() {
-                    @Override
-                    public void reportStringProgress(int resId, Object... stuff) {
-
-                    }
-                });
+                JRE17Util.checkInternalNewJre(activity.getAssets());
             }
             minecraftProfile.javaDir = Tools.LAUNCHERPROFILES_RTPREFIX + appropriateRuntime;
             LauncherProfiles.update();
         } else {
             if (versionInfo.javaVersion.majorVersion <= 17) { // there's a chance we have an internal one for this case
-                if (!JRE17Util.checkInternalNewJre(activity.getAssets(), new MultiRTUtils.RuntimeProgressReporter() {
-                    @Override
-                    public void reportStringProgress(int resId, Object... stuff) {
-
-                    }})){
+                if (!JRE17Util.checkInternalNewJre(activity.getAssets())){
                     showRuntimeFail(activity, versionInfo);
                     return false;
                 } else {
