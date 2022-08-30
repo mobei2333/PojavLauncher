@@ -5,6 +5,7 @@ import static net.kdt.pojavlaunch.utils.DownloadUtils.downloadFileMonitored;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +46,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AsyncMinecraftDownloader {
     public static final String MINECRAFT_RES = "https://resources.download.minecraft.net/";
+
+    /* Allows each downloading thread to have its own RECYCLED buffer */
+    private ConcurrentHashMap<Thread, byte[]> mThreadBuffers;
 
     public AsyncMinecraftDownloader(@NonNull Activity activity, JMinecraftVersionList.Version version,
                                     @NonNull DoneListener listener){
@@ -73,7 +78,7 @@ public class AsyncMinecraftDownloader {
                 if(!isManifestGood) {
                     ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_downloading, versionName + ".json");
                     verJsonDir.delete();
-                    downloadFileMonitored(verInfo.url, verJsonDir, null,
+                    downloadFileMonitored(verInfo.url, verJsonDir, getByteBuffer(),
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
@@ -123,7 +128,7 @@ public class AsyncMinecraftDownloader {
                     ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_downloading, verInfo.logging.client.file.id);
                     JMinecraftVersionList.Version finalVerInfo = verInfo;
                     downloadFileMonitored(
-                            verInfo.logging.client.file.url, outLib, null,
+                            verInfo.logging.client.file.url, outLib, getByteBuffer(),
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
@@ -169,7 +174,7 @@ public class AsyncMinecraftDownloader {
                 try {
                     downloadFileMonitored(
                             verInfo.downloads.values().toArray(new MinecraftClientInfo[0])[0].url,
-                            minecraftMainFile, null,
+                            minecraftMainFile, getByteBuffer(),
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
@@ -262,7 +267,7 @@ public class AsyncMinecraftDownloader {
             Log.i("AsyncMcDownloader","Queue size: " + workQueue.size());
             while ((!executor.awaitTermination(1000, TimeUnit.MILLISECONDS))&&(!localInterrupt.get()) /*&&mActivity.mIsAssetsProcessing*/) {
                 int DLSize = downloadedSize.get();
-                 setProgress(1000*(assetsSizeBytes/DLSize));
+                 setProgress(100*(DLSize/assetsSizeBytes));
             }
 
 
@@ -279,7 +284,7 @@ public class AsyncMinecraftDownloader {
     public void downloadAsset(JAssetInfo asset, File objectsDir, AtomicInteger downloadCounter) throws IOException {
         String assetPath = asset.hash.substring(0, 2) + "/" + asset.hash;
         File outFile = new File(objectsDir, assetPath);
-        downloadFileMonitored(MINECRAFT_RES + assetPath, outFile, null,
+        downloadFileMonitored(MINECRAFT_RES + assetPath, outFile, getByteBuffer(),
                 new Tools.DownloaderFeedback() {
                     int prevCurr;
                     @Override
@@ -293,7 +298,7 @@ public class AsyncMinecraftDownloader {
     public void downloadAssetMapped(JAssetInfo asset, String assetName, File resDir, AtomicInteger downloadCounter) throws IOException {
         String assetPath = asset.hash.substring(0, 2) + "/" + asset.hash;
         File outFile = new File(resDir,"/"+assetName);
-        downloadFileMonitored(MINECRAFT_RES + assetPath, outFile, null,
+        downloadFileMonitored(MINECRAFT_RES + assetPath, outFile, getByteBuffer(),
                 new Tools.DownloaderFeedback() {
                     int prevCurr;
                     @Override
@@ -326,7 +331,7 @@ public class AsyncMinecraftDownloader {
                 timesChecked++;
                 if(timesChecked > 5) throw new RuntimeException("Library download failed after 5 retries");
 
-                downloadFileMonitored(libPathURL, outLib, null,
+                downloadFileMonitored(libPathURL, outLib, getByteBuffer(),
                         new Tools.DownloaderFeedback() {
                             @Override
                             public void updateProgress(int curr, int max) {
@@ -374,6 +379,17 @@ public class AsyncMinecraftDownloader {
         }
 
         return null;
+    }
+
+    /**@return A byte buffer bound to a thread, useful to recycle it across downloads */
+    private byte[] getByteBuffer(){
+        byte[] buffer = mThreadBuffers.get(Thread.currentThread());
+        if (buffer == null){
+            buffer = new byte[8192];
+            mThreadBuffers.put(Thread.currentThread(), buffer);
+        }
+
+        return buffer;
     }
 
     private void setProgress(int progress){
