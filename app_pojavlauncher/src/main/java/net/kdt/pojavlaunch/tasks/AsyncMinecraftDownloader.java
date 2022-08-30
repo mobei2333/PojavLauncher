@@ -9,6 +9,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.kdt.mcgui.ProgressLayout;
+
 import net.kdt.pojavlaunch.JAssetInfo;
 import net.kdt.pojavlaunch.JAssets;
 import net.kdt.pojavlaunch.JMinecraftVersionList;
@@ -59,7 +61,6 @@ public class AsyncMinecraftDownloader {
         JAssets assets = null;
         try {
             File verJsonDir = new File(Tools.DIR_HOME_VERSION + downVName + ".json");
-            //verInfo = findVersion(versionName);
 
             if (verInfo.url != null) {
                 if(!LauncherPreferences.PREF_CHECK_LIBRARY_SHA)  Log.w("Chk","Checker is off");
@@ -70,12 +71,13 @@ public class AsyncMinecraftDownloader {
                             || Tools.compareSHA1(verJsonDir, verInfo.sha1));
 
                 if(!isManifestGood) {
+                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_downloading, versionName + ".json");
                     verJsonDir.delete();
                     downloadFileMonitored(verInfo.url, verJsonDir, null,
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    setProgress(1000*(curr/max));
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, versionName + ".json");
                                 }
                             }
                     );
@@ -108,9 +110,9 @@ public class AsyncMinecraftDownloader {
                     if(LauncherPreferences.PREF_CHECK_LIBRARY_SHA) {
                         if(!Tools.compareSHA1(outLib,verInfo.logging.client.file.sha1)) {
                             outLib.delete();
-                            //publishProgress("0", mActivity.getString(R.string.dl_library_sha_fail,verInfo.logging.client.file.id));
+                            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_fail,verInfo.logging.client.file.id);
                         }else{
-                            //publishProgress("0", mActivity.getString(R.string.dl_library_sha_pass,verInfo.logging.client.file.id));
+                            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_pass,verInfo.logging.client.file.id);
                         }
                     } else if (outLib.length() != verInfo.logging.client.file.size) {
                         // force updating anyways
@@ -118,13 +120,14 @@ public class AsyncMinecraftDownloader {
                     }
                 }
                 if (!outLib.exists()) {
-                    //publishProgress("0", mActivity.getString(R.string.mcl_launch_downloading, verInfo.logging.client.file.id));
+                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_downloading, verInfo.logging.client.file.id);
+                    JMinecraftVersionList.Version finalVerInfo = verInfo;
                     downloadFileMonitored(
                             verInfo.logging.client.file.url, outLib, null,
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    setProgress(1000*(curr/max));
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, finalVerInfo.logging.client.file.id);
                                 }
                             }
                     );
@@ -133,29 +136,29 @@ public class AsyncMinecraftDownloader {
 
 
             for (final DependentLibrary libItem : verInfo.libraries) {
-                if (!libItem.name.startsWith("org.lwjgl")) {
-                    String libArtifact = Tools.artifactToPath(libItem.name);
-                    outLib = new File(Tools.DIR_HOME_LIBRARY + "/" + libArtifact);
-                    outLib.getParentFile().mkdirs();
+                if(libItem.name.startsWith("org.lwjgl")){ //Black list
+                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, "Ignored " + libItem.name);
+                    continue;
+                }
 
-                    if (!outLib.exists()) {
-                        downloadLibrary(libItem,libArtifact,outLib);
-                    }else{
-                        if(libItem.downloads != null && libItem.downloads.artifact != null && libItem.downloads.artifact.sha1 != null && !libItem.downloads.artifact.sha1.isEmpty()) {
-                            if(!Tools.compareSHA1(outLib,libItem.downloads.artifact.sha1)) {
-                                outLib.delete();
-                                //publishProgress("0", mActivity.getString(R.string.dl_library_sha_fail,libItem.name));
-                                downloadLibrary(libItem,libArtifact,outLib);
-                            }else{
-                                //publishProgress("0", mActivity.getString(R.string.dl_library_sha_pass,libItem.name));
-                            }
+                String libArtifact = Tools.artifactToPath(libItem.name);
+                outLib = new File(Tools.DIR_HOME_LIBRARY + "/" + libArtifact);
+                outLib.getParentFile().mkdirs();
+
+                if (!outLib.exists()) {
+                    downloadLibrary(libItem,libArtifact,outLib);
+                }else{
+                    if(libItem.downloads != null && libItem.downloads.artifact != null && libItem.downloads.artifact.sha1 != null && !libItem.downloads.artifact.sha1.isEmpty()) {
+                        if(!Tools.compareSHA1(outLib,libItem.downloads.artifact.sha1)) {
+                            outLib.delete();
+                            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_fail,libItem.name);
+                            downloadLibrary(libItem,libArtifact,outLib);
                         }else{
-                            //publishProgress("0", mActivity.getString(R.string.dl_library_sha_unknown,libItem.name));
+                            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_pass,libItem.name);
                         }
+                    }else{
+                        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_unknown,libItem.name);
                     }
-                } else { // Black list
-                    //publishProgress("1", "Ignored " + libItem.name);
-                    //Thread.sleep(100);
                 }
             }
 
@@ -170,7 +173,7 @@ public class AsyncMinecraftDownloader {
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    setProgress(1000*(curr/max));
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, (100*(curr/max)), R.string.mcl_launch_downloading, versionName + ".jar" );
                                 }
                             }
                     );
@@ -191,8 +194,7 @@ public class AsyncMinecraftDownloader {
             Log.e("AsyncMcDownloader", e.toString());
         }
 
-        //publishProgress("1", mActivity.getString(R.string.mcl_launch_cleancache));
-        // new File(inputPath).delete();
+        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_cleancache);
         new File(Tools.DIR_HOME_VERSION).mkdir();
         for (File f : new File(Tools.DIR_HOME_VERSION).listFiles()) {
             if(f.getName().endsWith(".part")) {
@@ -214,7 +216,7 @@ public class AsyncMinecraftDownloader {
     public void downloadAssets(final JAssets assets, String assetsVersion, final File outputDir) throws IOException {
         LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 5, 500, TimeUnit.MILLISECONDS, workQueue);
-        //mActivity.mIsAssetsProcessing = true;
+
 
         Log.i("AsyncMcDownloader","Assets begin time: " + System.currentTimeMillis());
 
@@ -241,7 +243,9 @@ public class AsyncMinecraftDownloader {
                 continue;
             }
 
-            //if(outFile.exists()) publishProgress("0",mActivity.getString(R.string.dl_library_sha_fail,assetKey));
+            if(outFile.exists())
+                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.dl_library_sha_fail, assetKey);
+
             executor.execute(()->{
                 try {
                     if (!assets.mapToResources) downloadAsset(asset, objectsDir, downloadedSize);
@@ -326,7 +330,7 @@ public class AsyncMinecraftDownloader {
                         new Tools.DownloaderFeedback() {
                             @Override
                             public void updateProgress(int curr, int max) {
-                                setProgress(1000*(curr/max));
+                                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, outLib.getName());
                             }
                         }
                 );
@@ -334,6 +338,10 @@ public class AsyncMinecraftDownloader {
                 isFileGood = (libItem.downloads.artifact.sha1 == null
                         || LauncherPreferences.PREF_CHECK_LIBRARY_SHA)
                         || Tools.compareSHA1(outLib,libItem.downloads.artifact.sha1);
+
+                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
+                        isFileGood ? R.string.dl_library_sha_pass : R.string.dl_library_sha_unknown
+                        ,outLib.getName());
             }
         } catch (Throwable th) {
             Log.e("AsyncMcDownloader", th.toString());
