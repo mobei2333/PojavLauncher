@@ -84,7 +84,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
 
 
                     // Remove when we don't have progress
-                    if(progress == 0){
+                    if(progress < 0){
                         mLinearLayout.removeView(mMap.get(progressKey));
                         mMap.remove(progressKey);
                         mActiveProcesses--;
@@ -136,6 +136,10 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
 
     public static void setProgress(String progressKey, int progress, String message){
         setProgress(progressKey,progress, -1, message);
+    }
+
+    public static void clearProgress(String progressKey){
+        setProgress(progressKey, -1, -1);
     }
 
     @Override
