@@ -1,9 +1,13 @@
 package net.kdt.pojavlaunch;
 
+import static android.os.Build.VERSION_CODES.P;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -193,6 +197,21 @@ public class LauncherActivity extends BaseActivity {
         }
 
         super.onBackPressed();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        if (Build.VERSION.SDK_INT < P) return;
+
+        try {
+            Rect notchRect = getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+            // Math min is to handle all rotations
+            LauncherPreferences.PREF_NOTCH_SIZE = Math.min(notchRect.width(), notchRect.height());
+        }catch (Exception e){
+            Log.i("NOTCH DETECTION", "No notch detected, or the device if in split screen mode");
+            LauncherPreferences.PREF_NOTCH_SIZE = -1;
+        }
+        Tools.updateWindowSize(this);
     }
 
     private boolean isFragmentVisible(String tag){
