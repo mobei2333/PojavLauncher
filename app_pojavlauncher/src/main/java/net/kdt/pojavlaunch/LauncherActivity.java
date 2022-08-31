@@ -61,7 +61,7 @@ public class LauncherActivity extends BaseActivity {
 
     private final ExtraListener<String> mRefreshVersion = (key, value) -> {
         mVersionSpinner.getProfileAdapter().notifyDataSetChanged();
-        mVersionSpinner.setSelection(mVersionSpinner.getProfileAdapter().resolveProfileIndex(value));
+        mVersionSpinner.setProfileSelection(mVersionSpinner.getProfileAdapter().resolveProfileIndex(value));
         return false;
     };
 

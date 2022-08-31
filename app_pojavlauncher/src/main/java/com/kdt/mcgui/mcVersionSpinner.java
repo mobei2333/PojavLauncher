@@ -53,7 +53,7 @@ public class mcVersionSpinner extends ExtendedTextView {
 
 
     /** Set the selection AND saves it as a shared preference */
-    private void setProfileSelection(int position){
+    public void setProfileSelection(int position){
         setSelection(position);
         LauncherPreferences.DEFAULT_PREF.edit()
                 .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
