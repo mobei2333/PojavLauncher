@@ -72,6 +72,9 @@ public class MainActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mProfile = PojavProfile.getCurrentProfileContent(this, null);
+        minecraftProfile = LauncherProfiles.mainProfileJson.profiles.get(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
+
         initLayout(R.layout.activity_basemain);
 
         // Set the sustained performance mode for available APIs
@@ -94,14 +97,16 @@ public class MainActivity extends BaseActivity {
         MCOptionUtils.MCOptionListener optionListener = MCOptionUtils::getMcScale;
         MCOptionUtils.addMCOptionListener(optionListener);
 
-
-
         try {
-            mControlLayout.loadLayout(LauncherPreferences.PREF_DEFAULTCTRL_PATH);
+            // Load keys
+            mControlLayout.loadLayout(
+                    minecraftProfile.controlFile == null
+                    ? LauncherPreferences.PREF_DEFAULTCTRL_PATH
+                    : Tools.CTRLMAP_PATH + minecraftProfile.controlFile);
         } catch(IOException e) {
             try {
+                Log.w("MainActivity", "Unable to load the control file, loading the default now");
                 mControlLayout.loadLayout(Tools.CTRLDEF_FILE);
-                DEFAULT_PREF.edit().putString("defaultCtrl",Tools.CTRLDEF_FILE).apply();
             } catch (IOException ioException) {
                 Tools.showError(this, ioException);
             }
@@ -121,8 +126,6 @@ public class MainActivity extends BaseActivity {
             // FIXME: is it safe for multi thread?
             GLOBAL_CLIPBOARD = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             touchCharInput.setCharacterSender(new LwjglCharSender());
-            mProfile = PojavProfile.getCurrentProfileContent(this, null);
-            minecraftProfile = LauncherProfiles.mainProfileJson.profiles.get(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
 
 
             String runtime = LauncherPreferences.PREF_DEFAULT_RUNTIME;
@@ -356,18 +359,16 @@ public class MainActivity extends BaseActivity {
     }
 
     public void leaveCustomControls() {
-        if(this instanceof MainActivity) {
-            try {
-                MainActivity.mControlLayout.hideAllHandleViews();
-                MainActivity.mControlLayout.loadLayout((CustomControls)null);
-                MainActivity.mControlLayout.setModifiable(false);
-                System.gc();
-                MainActivity.mControlLayout.loadLayout(LauncherPreferences.DEFAULT_PREF.getString("defaultCtrl",Tools.CTRLDEF_FILE));
-            } catch (IOException e) {
-                Tools.showError(this,e);
-            }
-            //((MainActivity) this).mControlLayout.loadLayout((CustomControls)null);
+        try {
+            MainActivity.mControlLayout.hideAllHandleViews();
+            MainActivity.mControlLayout.loadLayout((CustomControls)null);
+            MainActivity.mControlLayout.setModifiable(false);
+            System.gc();
+            MainActivity.mControlLayout.loadLayout(LauncherPreferences.DEFAULT_PREF.getString("defaultCtrl",Tools.CTRLDEF_FILE));
+        } catch (IOException e) {
+            Tools.showError(this,e);
         }
+        //((MainActivity) this).mControlLayout.loadLayout((CustomControls)null);
         navDrawer.setAdapter(gameActionArrayAdapter);
         navDrawer.setOnItemClickListener(gameActionClickListener);
         isInEditor = false;
