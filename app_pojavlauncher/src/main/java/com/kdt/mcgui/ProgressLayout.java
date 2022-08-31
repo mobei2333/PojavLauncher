@@ -130,7 +130,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
 
     /** Update the progress bar content */
     public static void setProgress(String progressKey, int progress){
-         ExtraCore.setValue(progressKey, progress + '¤' + "-1");
+         ExtraCore.setValue(progressKey, progress + "¤" + "-1");
     }
 
     /** Update the text and progress content */
