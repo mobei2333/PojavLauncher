@@ -125,6 +125,12 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         setOnClickListener(this);
     }
 
+    /** Update the progress bar content */
+    public static void setProgress(String progressKey, int progress){
+         ExtraCore.setValue(progressKey, progress + '¤' + "-1");
+    }
+
+    /** Update the text and progress content */
     public static void setProgress(String progressKey, int progress, @StringRes int resource, String... message){
         StringBuilder builder = new StringBuilder();
         for(String bit : message){
@@ -134,10 +140,12 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         ExtraCore.setValue(progressKey, progress + "¤" + resource + "¤" + builder);
     }
 
+    /** Update the text and progress content */
     public static void setProgress(String progressKey, int progress, String message){
         setProgress(progressKey,progress, -1, message);
     }
 
+    /** Update the text and progress content */
     public static void clearProgress(String progressKey){
         setProgress(progressKey, -1, -1);
     }
