@@ -117,17 +117,29 @@ public class LauncherActivity extends BaseActivity {
 
 
         mPlayButton.setOnClickListener(v -> {
+            // Check various parameters before starting a download
+            //TODO you can technically spam the download in a short time window
             if(mProgressLayout.hasProcesses()){
                 Toast.makeText(this, "Tasks are in progress, please wait", Toast.LENGTH_LONG).show();
                 return;
             }
 
             String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
-            if (LauncherProfiles.mainProfileJson == null
-                    || LauncherProfiles.mainProfileJson.profiles == null
-                    || !LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)) return;
+            if (LauncherProfiles.mainProfileJson == null  || LauncherProfiles.mainProfileJson.profiles == null
+                    || !LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)){
+                Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
+                return;
+            }
             MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
-            if (prof == null || prof.lastVersionId == null) return;
+            if (prof == null || prof.lastVersionId == null){
+                Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if(mAccountSpinner.getSelectedAccount() == null){
+                Toast.makeText(this, "No selected minecraft account", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             new AsyncMinecraftDownloader(this, AsyncMinecraftDownloader.findVersion(prof.lastVersionId), () -> runOnUiThread(() -> {
                 try {
