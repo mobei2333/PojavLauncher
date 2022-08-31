@@ -48,7 +48,7 @@ public class AsyncMinecraftDownloader {
     public static final String MINECRAFT_RES = "https://resources.download.minecraft.net/";
 
     /* Allows each downloading thread to have its own RECYCLED buffer */
-    private ConcurrentHashMap<Thread, byte[]> mThreadBuffers;
+    private final ConcurrentHashMap<Thread, byte[]> mThreadBuffers = new ConcurrentHashMap<>(5);
 
     public AsyncMinecraftDownloader(@NonNull Activity activity, JMinecraftVersionList.Version version,
                                     @NonNull DoneListener listener){
