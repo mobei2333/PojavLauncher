@@ -79,14 +79,17 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                         System.arraycopy(progressStuff, 2, progressStuff, 0, progressStuff.length - 2);
                         mMap.get(progressKey).setText(getResources().getString(resourceString, progressStuff));
                     }else{
-                        mMap.get(progressStuff[2]);
+                        if(progressStuff.length >= 3)
+                            mMap.get(progressStuff[2]);
                     }
 
 
                     // Remove when we don't have progress
                     if(progress < 0){
+                        if(progress <= -10) // Only remove the observer when it is explicitly told to do so ?
+                            mMap.remove(progressKey);
+
                         mLinearLayout.removeView(mMap.get(progressKey));
-                        mMap.remove(progressKey);
                         mActiveProcesses--;
                     }
                 }

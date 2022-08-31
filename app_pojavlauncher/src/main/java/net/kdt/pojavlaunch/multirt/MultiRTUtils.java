@@ -86,6 +86,7 @@ public class MultiRTUtils {
         uncompressTarXZ(runtimeInputStream,dest);
         runtimeInputStream.close();
         unpack200(nativeLibDir,RUNTIME_FOLDER + "/" + name);
+        ProgressLayout.clearProgress(ProgressLayout.UNPACK_RUNTIME);
         read(name);
     }
 
@@ -118,6 +119,8 @@ public class MultiRTUtils {
         FileOutputStream fos = new FileOutputStream(binpack_verfile);
         fos.write(binpackVersion.getBytes());
         fos.close();
+
+        ProgressLayout.clearProgress(ProgressLayout.UNPACK_RUNTIME);
 
         sCache.remove(name); // Force reread
         return read(name);
