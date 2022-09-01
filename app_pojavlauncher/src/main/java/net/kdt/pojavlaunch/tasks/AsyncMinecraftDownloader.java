@@ -82,7 +82,7 @@ public class AsyncMinecraftDownloader {
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, versionName + ".json");
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*curr/max, R.string.mcl_launch_downloading, versionName + ".json");
                                 }
                             }
                     );
@@ -132,7 +132,7 @@ public class AsyncMinecraftDownloader {
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, finalVerInfo.logging.client.file.id);
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*curr/max, R.string.mcl_launch_downloading, finalVerInfo.logging.client.file.id);
                                 }
                             }
                     );
@@ -178,7 +178,7 @@ public class AsyncMinecraftDownloader {
                             new Tools.DownloaderFeedback() {
                                 @Override
                                 public void updateProgress(int curr, int max) {
-                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, (100*(curr/max)), R.string.mcl_launch_downloading, versionName + ".jar" );
+                                    ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*curr/max, R.string.mcl_launch_downloading, versionName + ".jar" );
                                 }
                             }
                     );
@@ -267,7 +267,7 @@ public class AsyncMinecraftDownloader {
             Log.i("AsyncMcDownloader","Queue size: " + workQueue.size());
             while ((!executor.awaitTermination(1000, TimeUnit.MILLISECONDS))&&(!localInterrupt.get()) /*&&mActivity.mIsAssetsProcessing*/) {
                 int DLSize = downloadedSize.get();
-                 ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(DLSize/assetsSizeBytes));
+                 ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*DLSize/assetsSizeBytes);
             }
 
 
@@ -335,7 +335,7 @@ public class AsyncMinecraftDownloader {
                         new Tools.DownloaderFeedback() {
                             @Override
                             public void updateProgress(int curr, int max) {
-                                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*(curr/max), R.string.mcl_launch_downloading, outLib.getName());
+                                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 100*curr/max, R.string.mcl_launch_downloading, outLib.getName());
                             }
                         }
                 );
