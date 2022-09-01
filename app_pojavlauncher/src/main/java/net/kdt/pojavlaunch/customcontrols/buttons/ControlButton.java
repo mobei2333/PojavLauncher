@@ -100,7 +100,9 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
     }
 
     public void setBackground(){
-        GradientDrawable gd = new GradientDrawable();
+        GradientDrawable gd =  getBackground() instanceof GradientDrawable
+                ? (GradientDrawable) getBackground()
+                : new GradientDrawable();
         gd.setColor(mProperties.bgColor);
         gd.setStroke(computeStrokeWidth(mProperties.strokeWidth), mProperties.strokeColor);
         gd.setCornerRadius(computeCornerRadius(mProperties.cornerRadius));
