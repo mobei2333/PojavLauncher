@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.profiles.fragment;
 
+import static net.kdt.pojavlaunch.profiles.ProfileAdapter.CREATE_PROFILE_MAGIC;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -96,6 +98,7 @@ public class ProfileEditorFragment extends Fragment {
 
         mDeleteButton.setOnClickListener(v -> {
             LauncherProfiles.mainProfileJson.profiles.remove(mProfileKey);
+            LauncherProfiles.update();
             ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, DELETED_PROFILE);
             Tools.removeCurrentFragment(requireActivity());
         });
@@ -178,7 +181,7 @@ public class ProfileEditorFragment extends Fragment {
 
     private MinecraftProfile getProfile(@NonNull String profile){
         MinecraftProfile minecraftProfile;
-        if(getArguments() == null) {
+        if(getArguments() == null && !profile.equals(CREATE_PROFILE_MAGIC)) {
             minecraftProfile = new MinecraftProfile(LauncherProfiles.mainProfileJson.profiles.get(profile));
             mProfileKey = profile;
         }else{
