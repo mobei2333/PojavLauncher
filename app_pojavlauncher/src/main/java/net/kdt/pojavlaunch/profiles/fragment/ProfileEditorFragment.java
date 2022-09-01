@@ -46,11 +46,12 @@ import java.util.UUID;
 
 public class ProfileEditorFragment extends Fragment {
     public static final String TAG = "ProfileEditorFragment";
+    public static final String DELETED_PROFILE = "deleted_profile";
 
     private String mProfileKey;
     private MinecraftProfile mTempProfile = null;
     private String mValueToConsume = "";
-    private Button mSaveButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
+    private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
     private Spinner mDefaultRuntime, mDefaultRenderer;
     private EditText mDefaultName, mDefaultJvmArgument;
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
@@ -93,6 +94,12 @@ public class ProfileEditorFragment extends Fragment {
             Tools.removeCurrentFragment(requireActivity());
         });
 
+        mDeleteButton.setOnClickListener(v -> {
+            LauncherProfiles.mainProfileJson.profiles.remove(mProfileKey);
+            ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, DELETED_PROFILE);
+            Tools.removeCurrentFragment(requireActivity());
+        });
+
         mGameDirButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle(2);
             bundle.putBoolean(FileSelectorFragment.BUNDLE_SELECT_FOLDER, true);
@@ -130,6 +137,8 @@ public class ProfileEditorFragment extends Fragment {
                 return true;
             });
         });
+
+
 
         loadValues(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""));
     }
@@ -195,6 +204,7 @@ public class ProfileEditorFragment extends Fragment {
         mDefaultJvmArgument = view.findViewById(R.id.vprof_editor_jre_args);
 
         mSaveButton = view.findViewById(R.id.vprof_editor_save_button);
+        mDeleteButton = view.findViewById(R.id.vprof_editor_delete_button);
         mControlSelectButton = view.findViewById(R.id.vprof_editor_ctrl_button);
         mVersionSelectButton = view.findViewById(R.id.vprof_editor_version_button);
         mGameDirButton = view.findViewById(R.id.vprof_editor_path_button);

@@ -17,12 +17,8 @@ public class ExtraConstants {
     public static final String SELECT_AUTH_METHOD = "start_login_procedure";
     /* ExtraCore constant: Selected file or folder, as a String */
     public static final String FILE_SELECTOR = "file_selector";
-    /* ExtraCore constant: Need to refresh the version spinner, selecting the uuid at the same time */
+    /* ExtraCore constant: Need to refresh the version spinner, selecting the uuid at the same time. Can be DELETED_PROFILE */
     public static final String REFRESH_VERSION_SPINNER = "refresh_version";
-    /* ExtraCore constant: The value to set on the main progress bar, between 0 and 100 */
-    public static final String PROGRESS_BAR_VALUE = "progress_bar_value";
-    /* ExtraCore constant: The text to display the current state of the progress */
-    public static final String PROGRESS_TEXT_VALUE = "progress_text_value";
 
 
 

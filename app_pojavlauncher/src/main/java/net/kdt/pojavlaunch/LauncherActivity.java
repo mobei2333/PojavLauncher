@@ -2,6 +2,8 @@ package net.kdt.pojavlaunch;
 
 import static android.os.Build.VERSION_CODES.P;
 
+import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
@@ -65,7 +67,10 @@ public class LauncherActivity extends BaseActivity {
 
     private final ExtraListener<String> mRefreshVersion = (key, value) -> {
         mVersionSpinner.getProfileAdapter().notifyDataSetChanged();
-        mVersionSpinner.setProfileSelection(mVersionSpinner.getProfileAdapter().resolveProfileIndex(value));
+        mVersionSpinner.setProfileSelection(value.equals(DELETED_PROFILE)
+                ? 0
+                : mVersionSpinner.getProfileAdapter().resolveProfileIndex(value));
+
         return false;
     };
 
