@@ -15,7 +15,7 @@
 
         <SwitchPreference
             android:defaultValue="true"
-
+            android:icon="@drawable/ic_setting_hash_verification"
             android:key="checkLibraries"
             android:summary="@string/mcl_setting_check_libraries_subtitle"
             android:title="@string/mcl_setting_check_libraries" />

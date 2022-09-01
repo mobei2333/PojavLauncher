@@ -18,6 +18,7 @@
             android:title="@string/preference_video_title"
             android:summary="@string/preference_video_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.settings.LauncherPreferenceVideoFragment"
+            android:icon="@drawable/ic_setting_video"
             />
 
         <Preference
@@ -25,6 +26,7 @@
             android:title="@string/preference_control_title"
             android:summary="@string/preference_control_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.settings.LauncherPreferenceControlFragment"
+            android:icon="@drawable/ic_menu_custom_controls"
             />
 
         <Preference
@@ -32,6 +34,7 @@
             android:title="@string/preference_java_title"
             android:summary="@string/preference_java_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.settings.LauncherPreferenceJavaFragment"
+            android:icon="@drawable/ic_setting_java_runtime"
             />
 
         <Preference
@@ -39,6 +42,7 @@
             android:title="@string/preference_misc_title"
             android:summary="@string/preference_misc_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.settings.LauncherPreferenceMiscellaneousFragment"
+            android:icon="@drawable/ic_setting_misc"
             />
 
         <!-- Not needed for now
