@@ -59,7 +59,7 @@ public class mcVersionSpinner extends ExtendedTextView {
                 .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,
                         mProfileAdapter.getItem(position).toString())
                 .apply();
-        mPopupWindow.dismiss();
+        if(mPopupWindow != null) mPopupWindow.dismiss();
     }
 
     public void setSelection(int position){
