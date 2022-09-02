@@ -1,5 +1,8 @@
 package net.kdt.pojavlaunch.value.launcherprofiles;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class MinecraftLauncherSettings
 {
 	public boolean enableSnapshots;

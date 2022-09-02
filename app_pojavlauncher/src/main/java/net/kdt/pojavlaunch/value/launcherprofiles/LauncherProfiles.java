@@ -1,8 +1,11 @@
 package net.kdt.pojavlaunch.value.launcherprofiles;
+import androidx.annotation.Keep;
+
 import com.google.gson.*;
 import net.kdt.pojavlaunch.*;
 import java.io.*;
 
+@Keep
 public class LauncherProfiles
 {
     public static MinecraftLauncherProfiles mainProfileJson;

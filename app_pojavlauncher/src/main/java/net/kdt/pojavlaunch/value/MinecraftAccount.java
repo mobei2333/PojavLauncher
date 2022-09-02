@@ -9,8 +9,12 @@ import java.io.*;
 import com.google.gson.*;
 import android.graphics.Bitmap;
 import android.util.Base64;
+
+import androidx.annotation.Keep;
+
 import org.apache.commons.io.IOUtils;
 
+@Keep
 public class MinecraftAccount
 {
     public String accessToken = "0"; // access token

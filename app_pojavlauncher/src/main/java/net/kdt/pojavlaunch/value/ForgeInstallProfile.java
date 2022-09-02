@@ -1,7 +1,10 @@
 package net.kdt.pojavlaunch.value;
 
+import androidx.annotation.Keep;
+
 import net.kdt.pojavlaunch.*;
 
+@Keep
 public class ForgeInstallProfile {
     // ----- < 1.12.2 Forge Install Profile -----
     public ForgeInstallProperties install;

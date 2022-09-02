@@ -2,12 +2,16 @@ package net.kdt.pojavlaunch.value;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+
+import androidx.annotation.Keep;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
 
+@Keep
 public class AccountSkin {
     public static Bitmap getSkin(String uuid) throws IOException {
         Profile p = Tools.GLOBAL_GSON.fromJson(DownloadUtils.downloadString("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid), Profile.class);
@@ -31,19 +35,23 @@ public class AccountSkin {
         
         return null;
     }
-    
+
+    @Keep
     public static class Texture {
         public String url;
     }
-    
+
+    @Keep
     public static class SkinProperty {
         public Map<String, Texture> textures;
     }
-    
+
+    @Keep
     public static class Property {
         public String name, value;
     }
-    
+
+    @Keep
     public static class Profile {
         public Property[] properties;
     }

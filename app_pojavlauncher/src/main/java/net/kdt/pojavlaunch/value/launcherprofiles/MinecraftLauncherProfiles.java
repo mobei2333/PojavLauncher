@@ -1,7 +1,10 @@
 package net.kdt.pojavlaunch.value.launcherprofiles;
+import androidx.annotation.Keep;
+
 import java.util.*;
 import net.kdt.pojavlaunch.*;
 
+@Keep
 public class MinecraftLauncherProfiles
 {
 	public Map<String, MinecraftProfile> profiles = new HashMap<>();
