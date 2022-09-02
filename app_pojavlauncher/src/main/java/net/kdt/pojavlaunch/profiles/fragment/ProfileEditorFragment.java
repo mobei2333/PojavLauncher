@@ -162,6 +162,7 @@ public class ProfileEditorFragment extends Fragment {
             if (nindex != -1) jvmIndex = nindex;
         }
         mDefaultRuntime.setAdapter(new RTSpinnerAdapter(context, runtimes));
+        if(jvmIndex == -1) jvmIndex = runtimes.size() - 1;
         mDefaultRuntime.setSelection(jvmIndex);
 
         // Renderer spinner
