@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity {
 
         mProfile = PojavProfile.getCurrentProfileContent(this, null);
         minecraftProfile = LauncherProfiles.mainProfileJson.profiles.get(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
+        MCOptionUtils.load(Tools.getGameDirPath(minecraftProfile));
 
         initLayout(R.layout.activity_basemain);
 
@@ -294,7 +295,7 @@ public class MainActivity extends BaseActivity {
 
         JREUtils.redirectAndPrintJRELog();
             LauncherProfiles.update();
-            Tools.launchMinecraft(this, mProfile, minecraftProfile.lastVersionId);
+            Tools.launchMinecraft(this, mProfile, minecraftProfile);
     }
     
     private void checkJavaArgsIsLaunchable(String jreVersion) throws Throwable {

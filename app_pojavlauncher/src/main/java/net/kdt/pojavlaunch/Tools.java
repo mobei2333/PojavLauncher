@@ -108,7 +108,7 @@ public final class Tools {
     }
 
 
-    public static void launchMinecraft(final Activity activity, MinecraftAccount profile, String versionName) throws Throwable {
+    public static void launchMinecraft(final Activity activity, MinecraftAccount minecraftAccount, MinecraftProfile minecraftProfile) throws Throwable {
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         ((ActivityManager)activity.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryInfo(mi);
         if(LauncherPreferences.PREF_RAM_ALLOCATION > (mi.availMem/1048576L)) {
@@ -125,25 +125,23 @@ public final class Tools {
             }
         }
 
-        JMinecraftVersionList.Version versionInfo = Tools.getVersionInfo(versionName);
-        String gamedirPath = Tools.DIR_GAME_NEW;
-            if(activity instanceof MainActivity) {
-                LauncherProfiles.update();
-                MinecraftProfile minecraftProfile = ((MainActivity)activity).minecraftProfile;
-                if(minecraftProfile == null) throw new Exception("Launching empty Profile");
-                if(minecraftProfile.gameDir != null && minecraftProfile.gameDir.startsWith(Tools.LAUNCHERPROFILES_RTPREFIX))
-                    gamedirPath = minecraftProfile.gameDir.replace(Tools.LAUNCHERPROFILES_RTPREFIX,Tools.DIR_GAME_HOME+"/");
-                if(minecraftProfile.javaArgs != null && !minecraftProfile.javaArgs.isEmpty())
-                    LauncherPreferences.PREF_CUSTOM_JAVA_ARGS = minecraftProfile.javaArgs;
-            }
+        JMinecraftVersionList.Version versionInfo = Tools.getVersionInfo(minecraftProfile.lastVersionId);
+
+        LauncherProfiles.update();
+        String gamedirPath = Tools.getGameDirPath(minecraftProfile);
+
+        if(minecraftProfile.javaArgs != null && !minecraftProfile.javaArgs.isEmpty())
+            LauncherPreferences.PREF_CUSTOM_JAVA_ARGS = minecraftProfile.javaArgs;
+
+        // Pre-process specific files
         disableSplash(gamedirPath);
-        String[] launchArgs = getMinecraftClientArgs(profile, versionInfo, gamedirPath);
+        String[] launchArgs = getMinecraftClientArgs(minecraftAccount, versionInfo, gamedirPath);
 
         // Select the appropriate openGL version
         OldVersionsUtils.selectOpenGlVersion(versionInfo);
 
 
-        String launchClassPath = generateLaunchClassPath(versionInfo,versionName);
+        String launchClassPath = generateLaunchClassPath(versionInfo, minecraftProfile.lastVersionId);
 
         List<String> javaArgList = new ArrayList<String>();
 
@@ -169,7 +167,7 @@ public final class Tools {
             }
             javaArgList.add("-Dlog4j.configurationFile=" + configFile);
         }
-        javaArgList.addAll(Arrays.asList(getMinecraftJVMArgs(versionName, gamedirPath)));
+        javaArgList.addAll(Arrays.asList(getMinecraftJVMArgs(minecraftProfile.lastVersionId, gamedirPath)));
         javaArgList.add("-cp");
         javaArgList.add(getLWJGL3ClassPath() + ":" + launchClassPath);
 
@@ -177,6 +175,16 @@ public final class Tools {
         javaArgList.addAll(Arrays.asList(launchArgs));
         // ctx.appendlnToLog("full args: "+javaArgList.toString());
         JREUtils.launchJavaVM(activity, javaArgList);
+    }
+
+    public static String getGameDirPath(@NonNull MinecraftProfile minecraftProfile){
+        if(minecraftProfile.gameDir != null){
+            if(minecraftProfile.gameDir.startsWith(Tools.LAUNCHERPROFILES_RTPREFIX))
+                return minecraftProfile.gameDir.replace(Tools.LAUNCHERPROFILES_RTPREFIX,Tools.DIR_GAME_HOME+"/");
+            else
+                return Tools.DIR_GAME_HOME + minecraftProfile.gameDir;
+        }
+        return Tools.DIR_GAME_NEW;
     }
 
     private static boolean mkdirs(String path) {
