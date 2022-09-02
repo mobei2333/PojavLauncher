@@ -60,9 +60,13 @@ public class RTSpinnerAdapter implements SpinnerAdapter {
                 LayoutInflater.from(mContext).inflate(android.R.layout.simple_list_item_1, parent,false);
 
         Runtime runtime = mRuntimes.get(position);
-        ((TextView) view).setText(String.format("%s - %s",
-                runtime.name.replace(".tar.xz", ""),
-                runtime.versionString == null ? convertView.getResources().getString(R.string.multirt_runtime_corrupt) : runtime.versionString));
+        if(position == mRuntimes.size() - 1 ){
+            ((TextView) view).setText(runtime.name);
+        }else{
+            ((TextView) view).setText(String.format("%s - %s",
+                    runtime.name.replace(".tar.xz", ""),
+                    runtime.versionString == null ? convertView.getResources().getString(R.string.multirt_runtime_corrupt) : runtime.versionString));
+        }
 
         return view;
     }
