@@ -56,7 +56,7 @@ public class MCOptionUtils {
         sParameterMap.clear();
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(sOptionFolderPath + "/options.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(optionFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 int firstColonIndex = line.indexOf(':');
@@ -108,7 +108,9 @@ public class MCOptionUtils {
                     .append('\n');
         
         try {
+            sFileObserver.stopWatching();
             Tools.write(sOptionFolderPath + "/options.txt", result.toString());
+            sFileObserver.startWatching();
         } catch (IOException e) {
             Log.w(Tools.APP_NAME, "Could not save options.txt", e);
         }
@@ -116,7 +118,6 @@ public class MCOptionUtils {
 
     /** @return The stored Minecraft GUI scale, also auto-computed if on auto-mode or improper setting */
     public static int getMcScale() {
-        MCOptionUtils.load();
         String str = MCOptionUtils.get("guiScale");
         int guiScale = (str == null ? 0 :Integer.parseInt(str));
 
