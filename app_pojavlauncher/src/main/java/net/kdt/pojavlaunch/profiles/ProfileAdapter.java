@@ -35,7 +35,7 @@ public class ProfileAdapter extends BaseAdapter {
         if(enableCreateButton) {
             mCreateProfile = new MinecraftProfile();
             mCreateProfile.name = "Create new profile";
-            mCreateProfile.lastVersionId = "";
+            mCreateProfile.lastVersionId = null;
         }
         mProfileList = new ArrayList<>(Arrays.asList(mProfiles.keySet().toArray(new String[0])));
         if(enableCreateButton) {
@@ -124,7 +124,7 @@ public class ProfileAdapter extends BaseAdapter {
                 extendedTextView.setText( String.format("%s - %s", extendedTextView.getText(), v.getContext().getText(R.string.profiles_latest_snapshot)));
             default:
                 extendedTextView.setText( String.format("%s - %s", extendedTextView.getText(), minecraftProfile.lastVersionId));
-        } else extendedTextView.setText( String.format("%s - %s", extendedTextView.getText(), v.getContext().getText(R.string.profiles_latest_snapshot)));
+        } else extendedTextView.setText(extendedTextView.getText());
 
     }
 }
