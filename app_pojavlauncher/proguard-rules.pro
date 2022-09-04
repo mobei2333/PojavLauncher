@@ -16,11 +16,7 @@
 #   public *;
 #}
 
-# We use Reflection on the builder to avoid creating too many objects
- -keep class net.objecthunter.exp4j.ExpressionBuilder**
- -keepclassmembers class net.objecthunter.exp4j.ExpressionBuilder** {
-    *;
- }
+
 # Option screens
  -keep class net.kdt.pojavlaunch.prefs.screens** {*;}
 
