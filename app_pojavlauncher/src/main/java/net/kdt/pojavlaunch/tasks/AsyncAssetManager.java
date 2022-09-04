@@ -97,6 +97,7 @@ public class AsyncAssetManager {
         mHandler.post(() -> {
             try {
                 unpackComponent(ctx, "caciocavallo", false);
+                unpackComponent(ctx, "caciocavallo17", false);
                 // Since the Java module system doesn't allow multiple JARs to declare the same module,
                 // we repack them to a single file here
                 unpackComponent(ctx, "lwjgl3", false);
