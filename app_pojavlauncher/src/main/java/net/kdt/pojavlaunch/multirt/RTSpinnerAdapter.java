@@ -65,7 +65,7 @@ public class RTSpinnerAdapter implements SpinnerAdapter {
         }else{
             ((TextView) view).setText(String.format("%s - %s",
                     runtime.name.replace(".tar.xz", ""),
-                    runtime.versionString == null ? convertView.getResources().getString(R.string.multirt_runtime_corrupt) : runtime.versionString));
+                    runtime.versionString == null ? view.getResources().getString(R.string.multirt_runtime_corrupt) : runtime.versionString));
         }
 
         return view;
