@@ -55,6 +55,8 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         @Override
         public void run() {
             for(String progressKey : mMap.keySet()){
+                if(progressKey == null) continue; //TODO check wtf does this
+
                 Object object = ExtraCore.consumeValue(progressKey);
 
                 if(object != null){
