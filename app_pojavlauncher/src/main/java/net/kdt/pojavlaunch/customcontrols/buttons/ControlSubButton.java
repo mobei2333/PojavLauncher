@@ -1,7 +1,5 @@
 package net.kdt.pojavlaunch.customcontrols.buttons;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,12 +51,11 @@ public class ControlSubButton extends ControlButton {
             return super.onTouchEvent(event);
         }
 
-        if(mGestureDetector == null) mGestureDetector = new GestureDetector(getContext(), new SingleTapConfirm());
-
-        if (mGestureDetector.onTouchEvent(event)) {
+        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             mCanTriggerLongClick = true;
             onLongClick(this);
         }
         return true;
     }
+
 }

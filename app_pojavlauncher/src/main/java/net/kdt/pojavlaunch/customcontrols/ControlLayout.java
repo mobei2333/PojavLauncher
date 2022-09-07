@@ -1,7 +1,11 @@
 package net.kdt.pojavlaunch.customcontrols;
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
+
 import android.content.*;
 import android.util.*;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.google.gson.*;
 import java.io.*;
@@ -13,7 +17,9 @@ import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
-import net.kdt.pojavlaunch.customcontrols.handleview.HandleView;
+import net.kdt.pojavlaunch.customcontrols.handleview.ControlHandleView;
+import net.kdt.pojavlaunch.customcontrols.handleview.EditControlPopup;
+
 import net.kdt.pojavlaunch.prefs.*;
 
 public class ControlLayout extends FrameLayout {
@@ -21,6 +27,9 @@ public class ControlLayout extends FrameLayout {
 	private boolean mModifiable;
 	private CustomControlsActivity mActivity;
 	private boolean mControlVisible = false;
+
+	private EditControlPopup mControlPopup = null;
+	private ControlHandleView mHandleView;
     
 	public ControlLayout(Context ctx) {
 		super(ctx);
@@ -30,12 +39,6 @@ public class ControlLayout extends FrameLayout {
 		super(ctx, attrs);
 	}
 
-	public void hideAllHandleViews() {
-		for(ControlButton button : getButtonChildren()){
-			HandleView hv = button.getHandleView();
-			if(hv != null) hv.hide();
-		}
-	}
 
 	public void loadLayout(String jsonPath) throws IOException, JsonSyntaxException {
 		CustomControls layout = LayoutConverter.loadAndConvertIfNecessary(jsonPath);
@@ -47,9 +50,6 @@ public class ControlLayout extends FrameLayout {
 	}
 
 	public void loadLayout(CustomControls controlLayout) {
-        if (mModifiable)
-            hideAllHandleViews();
-
         removeAllButtons();
 		if(mLayout != null) {
 			mLayout.mControlDataList = null;
@@ -73,9 +73,6 @@ public class ControlLayout extends FrameLayout {
 		for(ControlDrawerData drawerData : controlLayout.mDrawerDataList){
 			ControlDrawer drawer = addDrawerView(drawerData);
 			if(mModifiable) drawer.areButtonsVisible = true;
-
-
-
 		}
 
         mLayout.scaledAt = LauncherPreferences.PREF_BUTTONSIZE;
@@ -258,6 +255,31 @@ public class ControlLayout extends FrameLayout {
 		}
 	}
 
+	/**
+	 * Load the layout if needed, and pass down the burden of filling values
+	 * to the button at hand.
+	 */
+	public void editControlButton(ControlButton button){
+		if(mControlPopup == null)
+			mControlPopup = new EditControlPopup(getContext(), this);
+		mControlPopup.internalChanges = true;
+		mControlPopup.setCurrentlyEditedButton(button);
+		button.loadValues(mControlPopup);
+		mControlPopup.internalChanges = false;
+
+		mControlPopup.appear(button.getX() < currentDisplayMetrics.widthPixels/2f);
+		mControlPopup.disappearColor();
+
+		if(mHandleView == null){
+			mHandleView = new ControlHandleView(getContext());
+			addView(mHandleView);
+		}
+		mHandleView.setControlButton(button);
+
+		//mHandleView.show();
+	}
+
+
 	HashMap<View, ControlButton> mapTable = new HashMap<>();
 	//While this is called onTouch, this should only be called from a ControlButton.
 	public boolean onTouch(View v, MotionEvent ev) {
@@ -301,5 +323,21 @@ public class ControlLayout extends FrameLayout {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (mModifiable && event.getActionMasked() == MotionEvent.ACTION_UP && mControlPopup != null){
+			InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+
+			// When the input window cannot be hidden, it returns false
+			if(!imm.hideSoftInputFromWindow(getWindowToken(), 0)){
+				mControlPopup.disappearLayer();
+				mHandleView.hide();
+				//if(mHandleView != null)
+					//mHandleView.hide();
+			}
+		}
+		return true;
 	}
 }

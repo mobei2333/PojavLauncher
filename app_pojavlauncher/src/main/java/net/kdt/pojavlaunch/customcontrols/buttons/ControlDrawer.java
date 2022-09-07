@@ -8,6 +8,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
+import net.kdt.pojavlaunch.customcontrols.handleview.EditControlPopup;
 
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ public class ControlDrawer extends ControlButton {
 
     public ArrayList<ControlSubButton> buttons;
     public ControlDrawerData drawerData;
-    public ControlLayout layout;
+    public ControlLayout parentLayout;
     public boolean areButtonsVisible;
 
 
@@ -27,14 +28,14 @@ public class ControlDrawer extends ControlButton {
         super(layout, drawerData.properties);
 
         buttons = new ArrayList<>(drawerData.buttonProperties.size());
-        this.layout = layout;
+        this.parentLayout = layout;
         this.drawerData = drawerData;
         areButtonsVisible = layout.getModifiable();
     }
 
 
     public void addButton(ControlData properties){
-        addButton(new ControlSubButton(layout, properties, this));
+        addButton(new ControlSubButton(parentLayout, properties, this));
     }
 
     public void addButton(ControlSubButton button){
@@ -59,7 +60,7 @@ public class ControlDrawer extends ControlButton {
 
         if(buttons == null) return;
         if(drawerData.orientation == ControlDrawerData.Orientation.FREE) return;
-        for(int i=0; i < buttons.size(); ++i){
+        for(int i = 0; i < buttons.size(); ++i){
             switch (drawerData.orientation){
                 case RIGHT:
                     buttons.get(i).setDynamicX(generateDynamicX(getX() + (drawerData.properties.getWidth() + Tools.dpToPx(2))*(i+1) ));
@@ -168,5 +169,10 @@ public class ControlDrawer extends ControlButton {
     //Getters
     public ControlDrawerData getDrawerData() {
         return drawerData;
+    }
+
+    @Override
+    public void loadValues(EditControlPopup editControlPopup) {
+        editControlPopup.loadValues(drawerData);
     }
 }

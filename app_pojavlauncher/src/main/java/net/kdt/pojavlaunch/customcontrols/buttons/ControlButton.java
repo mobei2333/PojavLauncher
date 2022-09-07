@@ -28,12 +28,11 @@ import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CONTROL_TOP_OFF
 import static org.lwjgl.glfw.CallbackBridge.sendKeyPress;
 import static org.lwjgl.glfw.CallbackBridge.sendMouseButton;
 
-@SuppressLint("ViewConstructor")
-public class ControlButton extends androidx.appcompat.widget.AppCompatButton implements OnLongClickListener {
+@SuppressLint({"ViewConstructor", "AppCompatCustomView"})
+public class ControlButton extends TextView implements OnLongClickListener {
     private final Paint mRectPaint = new Paint();
-    protected GestureDetector mGestureDetector;
     protected ControlData mProperties;
-    protected SelectionEndHandleView mHandleView;
+
     protected boolean mModifiable = false;
     protected boolean mCanTriggerLongClick = true;
     protected boolean mIsToggled = false;
@@ -41,6 +40,9 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
 
     public ControlButton(ControlLayout layout, ControlData properties) {
         super(layout.getContext());
+        setGravity(Gravity.CENTER);
+        setAllCaps(true);
+        setTextColor(Color.WHITE);
         setPadding(4, 4, 4, 4);
 
         setOnLongClickListener(this);
@@ -50,9 +52,6 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
         setModified(false);
     }
 
-    public HandleView getHandleView() {
-        return mHandleView;
-    }
 
     public ControlData getProperties() {
         return mProperties;
@@ -67,7 +66,6 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
         //Size
         properties.setWidth(properties.getWidth() / layout.getLayoutScale() * PREF_BUTTONSIZE);
         properties.setHeight(properties.getHeight() / layout.getLayoutScale() * PREF_BUTTONSIZE);
-
 
         //Visibility
         properties.isHideable = !properties.containsKeycode(ControlData.SPECIALBTN_TOGGLECTRL) && !properties.containsKeycode(ControlData.SPECIALBTN_VIRTUALMOUSE);
@@ -96,7 +94,12 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
             setY(properties.insertDynamicPos(mProperties.dynamicY));
         }
 
-        setLayoutParams(new FrameLayout.LayoutParams((int) properties.getWidth(), (int) properties.getHeight() ));
+        // Recycle layout params
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if(params == null) params = new FrameLayout.LayoutParams((int) properties.getWidth(), (int) properties.getHeight());
+        params.width = (int) properties.getWidth();
+        params.height = (int) properties.getHeight();
+        setLayoutParams(params);
     }
 
     public void setBackground(){
@@ -250,6 +253,13 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
         }
     }
 
+    /** Regenerate and apply coordinates with supposedly modified properties */
+    public void regenerateDynamicCoordinates(){
+        mProperties.dynamicX = generateDynamicX(getX());
+        mProperties.dynamicY = generateDynamicY(getY());
+        updateProperties();
+    }
+
     public void updateProperties() {
         setProperties(mProperties);
     }
@@ -263,26 +273,15 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
 
     @Override
     public boolean onLongClick(View v) {
-        if (mCanTriggerLongClick && mModifiable) {
-            //Instantiate on need only
-            if(mHandleView == null) mHandleView = new SelectionEndHandleView(this);
-
-            if (mHandleView.isShowing()) {
-                mHandleView.hide();
-            } else {
-                if (getParent() != null) {
-                    ((ControlLayout) getParent()).hideAllHandleViews();
-                }
-                
-                try {
-                    mHandleView.show(this);
-                } catch (Throwable th) {
-                    th.printStackTrace();
-                }
-            }
+        if (mCanTriggerLongClick && mModifiable && getParent() != null) {
+            ((ControlLayout)getParent()).editControlButton(this);
         }
         
         return mCanTriggerLongClick;
+    }
+
+    public void loadValues(EditControlPopup editControlPopup){
+        editControlPopup.loadValues(getProperties());
     }
 
     protected float downX, downY;
@@ -354,15 +353,12 @@ public class ControlButton extends androidx.appcompat.widget.AppCompatButton imp
 
         /* If the button can be modified/moved */
         //Instantiate the gesture detector only when needed
-        if(mGestureDetector == null) mGestureDetector = new GestureDetector(getContext(), new SingleTapConfirm());
 
-        if (mGestureDetector.onTouchEvent(event)) {
-            mCanTriggerLongClick = true;
+        if (event.getActionMasked() == MotionEvent.ACTION_UP && mCanTriggerLongClick) {
             onLongClick(this);
         }
 
         switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_DOWN:
                 mCanTriggerLongClick = true;
                 downX = event.getRawX() - getX();

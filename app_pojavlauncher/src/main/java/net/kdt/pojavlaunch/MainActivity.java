@@ -361,7 +361,6 @@ public class MainActivity extends BaseActivity {
 
     public void leaveCustomControls() {
         try {
-            MainActivity.mControlLayout.hideAllHandleViews();
             MainActivity.mControlLayout.loadLayout((CustomControls)null);
             MainActivity.mControlLayout.setModifiable(false);
             System.gc();
