@@ -34,6 +34,11 @@ public class ControlHandleView extends View {
     private final ViewTreeObserver.OnPreDrawListener mPositionListener = new ViewTreeObserver.OnPreDrawListener() {
         @Override
         public boolean onPreDraw() {
+            if(mView == null || !mView.isShown()){
+                setVisibility(GONE);
+                return false;
+            }
+
             setX(mView.getX() + mView.getWidth());
             setY(mView.getY() + mView.getHeight());
             return true;
