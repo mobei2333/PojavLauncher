@@ -67,8 +67,8 @@ public class ControlHandleView extends View {
                 mYOffset = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                setX(event.getRawX() - mXOffset);
-                setY(event.getRawY() - mYOffset);
+                setX(getX() + event.getX() - mXOffset);
+                setY(getY() + event.getY() - mYOffset);
 
                 System.out.println(getX() - mView.getX());
                 System.out.println(getY() - mView.getY());
