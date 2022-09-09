@@ -853,8 +853,8 @@ public final class Tools {
         File file = new File(nameOutput);
         DownloadUtils.downloadFile(urlInput, file);
     }
-    public abstract static class DownloaderFeedback {
-        public abstract void updateProgress(int curr, int max);
+    public interface DownloaderFeedback {
+        void updateProgress(int curr, int max);
     }
 
 
