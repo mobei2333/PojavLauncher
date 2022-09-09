@@ -37,11 +37,11 @@ public class CustomControlsActivity extends BaseActivity {
         
 		setContentView(R.layout.activity_custom_controls);
 
-		mControlLayout = (ControlLayout) findViewById(R.id.customctrl_controllayout);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.customctrl_drawerlayout);
-		mDrawerNavigationView = (ListView) findViewById(R.id.customctrl_navigation_view);
+		mControlLayout = findViewById(R.id.customctrl_controllayout);
+		mDrawerLayout = findViewById(R.id.customctrl_drawerlayout);
+		mDrawerNavigationView = findViewById(R.id.customctrl_navigation_view);
 
-		mDrawerNavigationView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu_customcontrol)));
+		mDrawerNavigationView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu_customcontrol)));
 		mDrawerNavigationView.setOnItemClickListener((parent, view, position, id) -> {
 			switch(position) {
 				case 0:
