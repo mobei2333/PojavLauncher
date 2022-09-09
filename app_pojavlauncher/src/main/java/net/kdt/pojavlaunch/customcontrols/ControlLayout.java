@@ -16,20 +16,28 @@ import java.util.HashMap;
 import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
+import net.kdt.pojavlaunch.customcontrols.handleview.AddSubButton;
+import net.kdt.pojavlaunch.customcontrols.handleview.CloneButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.ControlHandleView;
+import net.kdt.pojavlaunch.customcontrols.handleview.DeleteButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.EditControlPopup;
 
+import net.kdt.pojavlaunch.customcontrols.handleview.FloatAroundButton;
 import net.kdt.pojavlaunch.prefs.*;
 
 public class ControlLayout extends FrameLayout {
 	protected CustomControls mLayout;
-	private boolean mModifiable;
+	private boolean mModifiable = false;
 	private CustomControlsActivity mActivity;
 	private boolean mControlVisible = false;
 
 	private EditControlPopup mControlPopup = null;
 	private ControlHandleView mHandleView;
+	public FloatAroundButton deleteButton = new DeleteButton(getContext());
+	public FloatAroundButton cloneButton = new CloneButton(getContext());
+	public FloatAroundButton addSubButton = new AddSubButton(getContext());
     
 	public ControlLayout(Context ctx) {
 		super(ctx);
@@ -44,12 +52,16 @@ public class ControlLayout extends FrameLayout {
 		CustomControls layout = LayoutConverter.loadAndConvertIfNecessary(jsonPath);
 		if(layout != null) {
 			loadLayout(layout);
-		}else{
-			throw new IOException("Unsupported control layout version");
+			return;
 		}
+
+		throw new IOException("Unsupported control layout version");
 	}
 
 	public void loadLayout(CustomControls controlLayout) {
+		deleteButton.setAxisOffset(getResources().getDimensionPixelOffset(R.dimen._36sdp));
+		cloneButton.setAxisOffset(-getResources().getDimensionPixelOffset(R.dimen._36sdp));
+
         removeAllButtons();
 		if(mLayout != null) {
 			mLayout.mControlDataList = null;
@@ -88,7 +100,7 @@ public class ControlLayout extends FrameLayout {
 
 	private void addControlView(ControlData controlButton) {
 		final ControlButton view = new ControlButton(this, controlButton);
-		view.setModifiable(mModifiable);
+
         if (!mModifiable) {
             view.setAlpha(view.getProperties().opacity);
 			view.setFocusable(false);
@@ -112,7 +124,7 @@ public class ControlLayout extends FrameLayout {
 	private ControlDrawer addDrawerView(ControlDrawerData drawerData){
 
 		final ControlDrawer view = new ControlDrawer(this,drawerData == null ? mLayout.mDrawerDataList.get(mLayout.mDrawerDataList.size()-1) : drawerData);
-		view.setModifiable(mModifiable);
+
 		if (!mModifiable) {
 			view.setAlpha(view.getProperties().opacity);
 			view.setFocusable(false);
@@ -137,7 +149,7 @@ public class ControlLayout extends FrameLayout {
 
 	public void addSubView(ControlDrawer drawer, ControlData controlButton){
 		final ControlSubButton view = new ControlSubButton(this, controlButton, drawer);
-		view.setModifiable(mModifiable);
+
 		if (!mModifiable) {
 			view.setAlpha(view.getProperties().opacity);
 			view.setFocusable(false);
@@ -153,44 +165,13 @@ public class ControlLayout extends FrameLayout {
 	}
 
     private void removeAllButtons() {
-		for(View v : getButtonChildren()){
-			removeView(v);
+		for(ControlInterface button : getButtonChildren()){
+			removeView(button.getControlView());
 		}
 
 		System.gc();
 		//i wanna be sure that all the removed Views will be removed after a reload
 		//because if frames will slowly go down after many control changes it will be warm and bad
-	}
-
-	public void removeControlButton(ControlButton controlButton) {
-		mLayout.mControlDataList.remove(controlButton.getProperties());
-		controlButton.setVisibility(View.GONE);
-		removeView(controlButton);
-
-		setModified(true);
-	}
-
-	public void removeControlDrawer(ControlDrawer controlDrawer){
-		for(ControlSubButton subButton : controlDrawer.buttons){
-			subButton.setVisibility(GONE);
-			removeView(subButton);
-		}
-		mLayout.mDrawerDataList.remove(controlDrawer.getDrawerData());
-		controlDrawer.setVisibility(GONE);
-		removeView(controlDrawer);
-
-		setModified(true);
-	}
-
-	public void removeControlSubButton(ControlSubButton subButton){
-		subButton.parentDrawer.drawerData.buttonProperties.remove(subButton.getProperties());
-		subButton.parentDrawer.buttons.remove(subButton);
-
-		subButton.parentDrawer.syncButtons();
-
-		subButton.setVisibility(GONE);
-		removeView(subButton);
-
 	}
 
 	public void saveLayout(String path) throws Exception {
@@ -211,21 +192,35 @@ public class ControlLayout extends FrameLayout {
 		return mLayout.scaledAt;
 	}
 
+	public CustomControls getLayout(){
+		return mLayout;
+	}
+
 	public void setControlVisible(boolean isVisible) {
 		if (mModifiable) return; // Not using on custom controls activity
 
 		mControlVisible = isVisible;
-		for(ControlButton button : getButtonChildren()){
+		for(ControlInterface button : getButtonChildren()){
 			button.setVisible(isVisible);
 		}
 	}
 	
 	public void setModifiable(boolean isModifiable) {
 		mModifiable = isModifiable;
-		for(ControlButton button : getButtonChildren()){
-			button.setModifiable(isModifiable);
+
+		if(mModifiable){
+			addView(deleteButton);
+			addView(cloneButton);
+			addView(addSubButton);
+		}else {
+			removeView(deleteButton);
+			removeView(cloneButton);
+			removeView(addSubButton);
+		}
+
+		for(ControlInterface button : getButtonChildren()){
 			if (!isModifiable)
-				button.setAlpha(button.getProperties().opacity);
+				button.getControlView().setAlpha(button.getProperties().opacity);
 		}
 	}
 
@@ -238,18 +233,18 @@ public class ControlLayout extends FrameLayout {
 
 	}
 
-	public ArrayList<ControlButton> getButtonChildren(){
-		ArrayList<ControlButton> children = new ArrayList<>();
+	public ArrayList<ControlInterface> getButtonChildren(){
+		ArrayList<ControlInterface> children = new ArrayList<>();
 		for(int i=0; i<getChildCount(); ++i){
 			View v = getChildAt(i);
-			if(v instanceof ControlButton)
-				children.add(((ControlButton) v));
+			if(v instanceof ControlInterface)
+				children.add(((ControlInterface) v));
 		}
 		return children;
 	}
 
 	public void refreshControlButtonPositions(){
-		for(ControlButton button : getButtonChildren()){
+		for(ControlInterface button : getButtonChildren()){
 			button.setDynamicX(button.getProperties().dynamicX);
 			button.setDynamicY(button.getProperties().dynamicY);
 		}
@@ -265,10 +260,12 @@ public class ControlLayout extends FrameLayout {
 		mControlPopup.internalChanges = true;
 		mControlPopup.setCurrentlyEditedButton(button);
 		button.loadValues(mControlPopup);
+
 		mControlPopup.internalChanges = false;
 
 		mControlPopup.appear(button.getX() < currentDisplayMetrics.widthPixels/2f);
 		mControlPopup.disappearColor();
+
 
 		if(mHandleView == null){
 			mHandleView = new ControlHandleView(getContext());
@@ -280,10 +277,10 @@ public class ControlLayout extends FrameLayout {
 	}
 
 
-	HashMap<View, ControlButton> mapTable = new HashMap<>();
+	HashMap<View, ControlInterface> mapTable = new HashMap<>();
 	//While this is called onTouch, this should only be called from a ControlButton.
 	public boolean onTouch(View v, MotionEvent ev) {
-		ControlButton lastControlButton = mapTable.get(v);
+		ControlInterface lastControlButton = mapTable.get(v);
 
 		//Check if the action is cancelling, reset the lastControl button associated to the view
 		if(ev.getActionMasked() == MotionEvent.ACTION_UP || ev.getActionMasked() == MotionEvent.ACTION_CANCEL){
@@ -296,8 +293,8 @@ public class ControlLayout extends FrameLayout {
 
 		//Optimization pass to avoid looking at all children again
 		if(lastControlButton != null){
-			if(	ev.getRawX() > lastControlButton.getX() && ev.getRawX() < lastControlButton.getX() + lastControlButton.getWidth() &&
-				ev.getRawY() > lastControlButton.getY() && ev.getRawY() < lastControlButton.getY() + lastControlButton.getHeight()){
+			if(	ev.getRawX() > lastControlButton.getControlView().getX() && ev.getRawX() < lastControlButton.getControlView().getX() + lastControlButton.getControlView().getWidth() &&
+				ev.getRawY() > lastControlButton.getControlView().getY() && ev.getRawY() < lastControlButton.getControlView().getY() + lastControlButton.getControlView().getHeight()){
 				return true;
 			}
 		}
@@ -307,11 +304,11 @@ public class ControlLayout extends FrameLayout {
 		mapTable.put(v, null);
 
 		//Look for another SWIPEABLE button
-		for(ControlButton button : getButtonChildren()){
+		for(ControlInterface button : getButtonChildren()){
 			if(!button.getProperties().isSwipeable) continue;
 
-			if(	ev.getRawX() > button.getX() && ev.getRawX() < button.getX() + button.getWidth() &&
-				ev.getRawY() > button.getY() && ev.getRawY() < button.getY() + button.getHeight()){
+			if(	ev.getRawX() > button.getControlView().getX() && ev.getRawX() < button.getControlView().getX() + button.getControlView().getWidth() &&
+				ev.getRawY() > button.getControlView().getY() && ev.getRawY() < button.getControlView().getY() + button.getControlView().getHeight()){
 
 				//Press the new key
 				if(!button.equals(lastControlButton)){
@@ -332,12 +329,28 @@ public class ControlLayout extends FrameLayout {
 
 			// When the input window cannot be hidden, it returns false
 			if(!imm.hideSoftInputFromWindow(getWindowToken(), 0)){
-				mControlPopup.disappearLayer();
-				mHandleView.hide();
-				//if(mHandleView != null)
-					//mHandleView.hide();
+				if(mControlPopup.disappearLayer()){
+					addSubButton.hide();
+					cloneButton.hide();
+					deleteButton.hide();
+					mHandleView.hide();
+				}
 			}
 		}
 		return true;
+	}
+
+	public void removeEditWindow() {
+		InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+
+		// When the input window cannot be hidden, it returns false
+		imm.hideSoftInputFromWindow(getWindowToken(), 0);
+		mControlPopup.disappearColor();
+		mControlPopup.disappear();
+
+		cloneButton.hide();
+		deleteButton.hide();
+		addSubButton.hide();
+		mHandleView.hide();
 	}
 }

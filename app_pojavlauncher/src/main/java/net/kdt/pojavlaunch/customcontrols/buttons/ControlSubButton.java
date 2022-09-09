@@ -17,9 +17,6 @@ public class ControlSubButton extends ControlButton {
     public ControlSubButton(ControlLayout layout, ControlData properties, ControlDrawer parentDrawer) {
         super(layout, properties);
         this.parentDrawer = parentDrawer;
-
-
-
         filterProperties();
     }
 
@@ -47,7 +44,7 @@ public class ControlSubButton extends ControlButton {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(!mModifiable || parentDrawer.drawerData.orientation == ControlDrawerData.Orientation.FREE){
+        if(!getControlLayoutParent().getModifiable() || parentDrawer.drawerData.orientation == ControlDrawerData.Orientation.FREE){
             return super.onTouchEvent(event);
         }
 
@@ -58,4 +55,29 @@ public class ControlSubButton extends ControlButton {
         return true;
     }
 
+    @Override
+    public void cloneButton() {
+        ControlData cloneData = new ControlData(getProperties());
+        cloneData.dynamicX = "0.5 * ${screen_width}";
+        cloneData.dynamicY = "0.5 * ${screen_height}";
+        ((ControlLayout) getParent()).addSubButton(parentDrawer, cloneData);
+    }
+
+    @Override
+    public void removeButton() {
+        parentDrawer.drawerData.buttonProperties.remove(getProperties());
+        parentDrawer.drawerData.buttonProperties.remove(getProperties());
+        parentDrawer.buttons.remove(this);
+
+        parentDrawer.syncButtons();
+
+        super.removeButton();
+    }
+
+    @Override
+    public void snapAndAlign(float x, float y) {
+        if(parentDrawer.drawerData.orientation == ControlDrawerData.Orientation.FREE)
+            super.snapAndAlign(x, y);
+        // Else the button is forced into place
+    }
 }

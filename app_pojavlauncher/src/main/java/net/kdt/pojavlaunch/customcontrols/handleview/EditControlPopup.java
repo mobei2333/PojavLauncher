@@ -170,12 +170,15 @@ public class EditControlPopup {
         mColorEditorAnimator.start();
     }
 
-    /** Slide out the first visible layer */
-    public void disappearLayer(){
+    /** Slide out the first visible layer.
+     * @return True if the last layer is disappearing */
+    public boolean disappearLayer(){
         if(mDisplayingColor){
             disappearColor();
+            return false;
         }else{
             disappear();
+            return true;
         }
     }
 

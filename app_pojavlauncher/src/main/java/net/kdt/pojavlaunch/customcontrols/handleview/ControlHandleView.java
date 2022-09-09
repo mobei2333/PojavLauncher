@@ -35,8 +35,8 @@ public class ControlHandleView extends View {
         @Override
         public boolean onPreDraw() {
             if(mView == null || !mView.isShown()){
-                setVisibility(GONE);
-                return false;
+                hide();
+                return true;
             }
 
             setX(mView.getX() + mView.getWidth());
@@ -89,6 +89,8 @@ public class ControlHandleView extends View {
     }
 
     public void hide(){
+        if(mView != null)
+            mView.getViewTreeObserver().removeOnPreDrawListener(mPositionListener);
         setVisibility(GONE);
     }
 }
