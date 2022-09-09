@@ -1,6 +1,8 @@
 package net.kdt.pojavlaunch.customcontrols.handleview;
 
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 
 import android.animation.ObjectAnimator;
@@ -78,6 +80,9 @@ public class EditControlPopup {
     protected TextView mSelectBackgroundColor, mSelectStrokeColor;
     protected ArrayAdapter<String> mAdapter;
     protected String[] mSpecialArray;
+
+    // Decorative textviews
+    private TextView mOrientationTextView, mMappingTextView;
 
 
 
@@ -216,7 +221,7 @@ public class EditControlPopup {
 
     private void setDefaultVisibilitySetting(){
         for(int i=0; i<mRootView.getChildCount(); ++i){
-            mRootView.getChildAt(i).setVisibility(View.VISIBLE);
+            mRootView.getChildAt(i).setVisibility(VISIBLE);
         }
     }
 
@@ -234,6 +239,8 @@ public class EditControlPopup {
     /** Load values for basic control data */
     public void loadValues(ControlData data){
         setDefaultVisibilitySetting();
+        mOrientationTextView.setVisibility(GONE);
+        mOrientationSpinner.setVisibility(GONE);
 
         mNameEditText.setText(data.name);
         mWidthEditText.setText(String.valueOf(data.getWidth()));
@@ -267,11 +274,18 @@ public class EditControlPopup {
         mOrientationSpinner.setSelection(
                 ControlDrawerData.orientationToInt(data.orientation));
 
-        mKeycodeSpinners[0].setVisibility(View.GONE);
-        mKeycodeSpinners[1].setVisibility(View.GONE);
-        mKeycodeSpinners[2].setVisibility(View.GONE);
-        mKeycodeSpinners[3].setVisibility(View.GONE);
-        mOrientationSpinner.setVisibility(View.VISIBLE);
+        mMappingTextView.setVisibility(GONE);
+        mKeycodeSpinners[0].setVisibility(GONE);
+        mKeycodeSpinners[1].setVisibility(GONE);
+        mKeycodeSpinners[2].setVisibility(GONE);
+        mKeycodeSpinners[3].setVisibility(GONE);
+
+        mOrientationTextView.setVisibility(VISIBLE);
+        mOrientationSpinner.setVisibility(VISIBLE);
+
+        mSwipeableSwitch.setVisibility(View.GONE);
+        mPassthroughSwitch.setVisibility(View.GONE);
+        mToggleSwitch.setVisibility(View.GONE);
     }
 
 
@@ -296,6 +310,10 @@ public class EditControlPopup {
         mStrokePercentTextView = mScrollView.findViewById(R.id.editStrokeWidth_textView_percent);
         mAlphaPercentTextView = mScrollView.findViewById(R.id.editButtonOpacity_textView_percent);
         mCornerRadiusPercentTextView = mScrollView.findViewById(R.id.editCornerRadius_textView_percent);
+
+        //Decorative stuff
+        mMappingTextView = mScrollView.findViewById(R.id.editMapping_textView);
+        mOrientationTextView = mScrollView.findViewById(R.id.editOrientation_textView);
     }
 
     /**
