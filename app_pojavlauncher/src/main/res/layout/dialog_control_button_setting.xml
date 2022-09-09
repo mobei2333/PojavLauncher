@@ -280,7 +280,7 @@
 
 
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editBackgroundColor_textView" />
+            app:layout_constraintTop_toBottomOf="@id/editStrokeColor_textView" />
 
         <SeekBar
             android:id="@+id/editStrokeWidth_seekbar"
@@ -288,6 +288,7 @@
             android:layout_height="wrap_content"
 
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.538"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editStrokeWidth_textView" />
 
@@ -305,19 +306,19 @@
         <!-- STROKE COLOR VERSION -->
         <com.kdt.extended.ExtendedTextView
             android:id="@+id/editStrokeColor_textView"
-            android:background="?attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:gravity="center_vertical"
-            android:text="@string/customctrl_stroke_color"
+            android:background="?attr/selectableItemBackground"
             android:drawableEnd="@drawable/spinner_arrow_right"
-            app:drawableEndSize="20dp"
-            app:drawableEndIntegerScaling="true"
+            android:gravity="center_vertical"
             android:paddingEnd="5dp"
+            android:text="@string/customctrl_stroke_color"
+            app:drawableEndIntegerScaling="true"
+            app:drawableEndSize="20dp"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editStrokeWidth_seekbar" />
+            app:layout_constraintTop_toBottomOf="@+id/editBackgroundColor_textView" />
 
 
         <!-- CORNER RADIUS SECTION -->
@@ -331,7 +332,7 @@
 
 
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editStrokeColor_textView" />
+            app:layout_constraintTop_toBottomOf="@id/editStrokeWidth_seekbar" />
 
         <SeekBar
             android:id="@+id/editCornerRadius_seekbar"
