@@ -86,14 +86,14 @@ public abstract class FloatAroundButton extends TextView implements View.OnClick
         //TODO improve the "algo"
         ViewGroup parent = ((ViewGroup) mFollowedView.getParent());
 
-        int side = mFollowedView.getX() > parent.getWidth()/2f
+        int side = mFollowedView.getX() + getWidth()/2f > parent.getWidth()/2f
                 ? SIDE_LEFT
                 : SIDE_RIGHT;
 
         float futurePos = getYPosition(side);
-        if(futurePos + getHeight() > parent.getHeight()){
+        if(futurePos + getHeight() > (parent.getHeight() + getHeight()/2)){
             side = SIDE_TOP;
-        }else if (futurePos < 0){
+        }else if (futurePos < -getHeight()/2){
             side = SIDE_BOTTOM;
         }
 
