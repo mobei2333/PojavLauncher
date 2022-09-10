@@ -32,6 +32,8 @@ public class ColorSelector implements HueSelectionListener, RectangleSelectionLi
     private final ColorStateList mTextColors;
     private boolean mWatch = true;
 
+    private boolean mAlphaEnabled = true;
+
 
     /**
      * Creates a color selector dialog for this Context.
@@ -77,7 +79,6 @@ public class ColorSelector implements HueSelectionListener, RectangleSelectionLi
     public void show(int previousColor) {
         runColor(previousColor); // initialize
         dispatchColorChange(); // set the hex text
-
     }
 
     @Override
@@ -127,7 +128,7 @@ public class ColorSelector implements HueSelectionListener, RectangleSelectionLi
         mLuminosityIntensityView.setColor(Color.HSVToColor(mHueTemplate), false);
         mLuminosityIntensityView.setLuminosityIntensity(mHsvSelected[2], mHsvSelected[1]);
         mAlphaSelected = Color.alpha(color);
-        mAlphaView.setAlpha(mAlphaSelected);
+        mAlphaView.setAlpha(mAlphaEnabled ? mAlphaSelected : 255);
         mColorView.setColor(color);
     }
 
@@ -154,6 +155,11 @@ public class ColorSelector implements HueSelectionListener, RectangleSelectionLi
 
     public void setColorSelectionListener(ColorSelectionListener listener){
         mColorSelectionListener = listener;
+    }
+
+    public void setAlphaEnabled(boolean alphaEnabled){
+        mAlphaEnabled = alphaEnabled;
+        mAlphaView.setVisibility(alphaEnabled ? View.VISIBLE : View.GONE);
     }
 
     private void notifyColorSelector(int color){

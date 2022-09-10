@@ -463,6 +463,7 @@ public class EditControlPopup {
 
 
         mSelectStrokeColor.setOnClickListener(v -> {
+            mColorSelector.setAlphaEnabled(false);
             mColorSelector.setColorSelectionListener(color -> {
                 mCurrentlyEditedButton.getProperties().strokeColor = color;
                 mCurrentlyEditedButton.setBackground();
@@ -471,6 +472,7 @@ public class EditControlPopup {
         });
 
         mSelectBackgroundColor.setOnClickListener(v -> {
+            mColorSelector.setAlphaEnabled(true);
             mColorSelector.setColorSelectionListener(color -> {
                 mCurrentlyEditedButton.getProperties().bgColor = color;
                 mCurrentlyEditedButton.setBackground();
