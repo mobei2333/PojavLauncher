@@ -213,6 +213,7 @@ public class AsyncMinecraftDownloader {
 
 
         Log.i("AsyncMcDownloader","Assets begin time: " + System.currentTimeMillis());
+        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_download_assets);
 
         Map<String, JAssetInfo> assetsObjects = assets.objects;
         int assetsSizeBytes = 0;
