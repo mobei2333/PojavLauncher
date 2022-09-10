@@ -4,10 +4,12 @@ import static android.os.Build.VERSION_CODES.P;
 
 import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
@@ -49,6 +53,9 @@ import java.util.List;
 
 public class LauncherActivity extends BaseActivity {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
+
+    private final int REQUEST_STORAGE_REQUEST_CODE = 1;
+    private final Object mLockStoragePerm = new Object();
 
     private mcVersionSpinner mVersionSpinner;
     private mcAccountSpinner mAccountSpinner;
@@ -108,6 +115,8 @@ public class LauncherActivity extends BaseActivity {
         setContentView(R.layout.activity_pojav_launcher);
         getWindow().setBackgroundDrawable(null);
         bindViews();
+
+        askForStoragePermission(); // Will wait here
 
         mSettingsButton.setOnClickListener(mSettingButtonListener);
         mDeleteAccountButton.setOnClickListener(mAccountDeleteButtonListener);
@@ -227,6 +236,52 @@ public class LauncherActivity extends BaseActivity {
     private boolean isFragmentVisible(int id){
         Fragment fragment = getSupportFragmentManager().findFragmentById(id);
         return fragment != null && fragment.isVisible();
+    }
+
+    private void askForStoragePermission(){
+        int revokeCount = 0;
+        while (Build.VERSION.SDK_INT >= 23 && Build.VERSION.SDK_INT < 29 && !isStorageAllowed()) { //Do not ask for storage at all on Android 10+
+            try {
+                revokeCount++;
+                if (revokeCount >= 3) {
+                    Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                requestStoragePermission();
+
+                synchronized (mLockStoragePerm) {
+                    mLockStoragePerm.wait();
+                }
+            } catch (InterruptedException e) {
+                Log.e("LauncherActivity", e.toString());
+            }
+        }
+    }
+
+    private boolean isStorageAllowed() {
+        //Getting the permission status
+        int result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+
+        //If permission is granted returning true
+        return result1 == PackageManager.PERMISSION_GRANTED &&
+                result2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestStoragePermission()
+    {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_STORAGE_REQUEST_CODE){
+            synchronized (mLockStoragePerm) {
+                mLockStoragePerm.notifyAll();
+            }
+        }
     }
 
     /** Stuff all the view boilerplate here */
