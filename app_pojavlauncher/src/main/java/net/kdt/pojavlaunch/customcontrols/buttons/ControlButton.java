@@ -35,7 +35,7 @@ public class ControlButton extends TextView implements ControlInterface {
         setTextColor(Color.WHITE);
         setPadding(4, 4, 4, 4);
 
-        setOnLongClickListener(this);
+        //setOnLongClickListener(this);
 
         //When a button is created, the width/height has yet to be processed to fit the scaling.
         setProperties(preProcessProperties(properties, layout));
@@ -90,7 +90,7 @@ public class ControlButton extends TextView implements ControlInterface {
 
     @Override
     public boolean onLongClick(View v) {
-        if (mCanTriggerLongClick && getParent() != null) {
+        if (mCanTriggerLongClick && getControlLayoutParent().getModifiable()) {
             ((ControlLayout)getParent()).editControlButton(this);
             getControlLayoutParent().cloneButton.setFollowedView(this);
             getControlLayoutParent().deleteButton.setFollowedView(this);

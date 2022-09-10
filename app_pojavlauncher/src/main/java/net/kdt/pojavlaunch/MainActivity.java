@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity {
     private LoggerView loggerView;
     private DrawerLayout drawerLayout;
     private ListView navDrawer;
+    private View mDrawerPullButton;
     public static ControlLayout mControlLayout;
 
 
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity {
         MCOptionUtils.load(Tools.getGameDirPath(minecraftProfile));
 
         initLayout(R.layout.activity_basemain);
+        getWindow().setBackgroundDrawable(null);
 
         // Set the sustained performance mode for available APIs
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -121,6 +123,9 @@ public class MainActivity extends BaseActivity {
     protected void initLayout(int resId) {
         setContentView(resId);
         bindValues();
+
+        mDrawerPullButton.setOnClickListener(v -> drawerLayout.openDrawer(navDrawer));
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         try {
             Logger.getInstance().reset();
@@ -171,6 +176,8 @@ public class MainActivity extends BaseActivity {
             navDrawer.setOnItemClickListener(gameActionClickListener);
             drawerLayout.closeDrawers();
 
+
+
             minecraftGLView.setSurfaceReadyListener(() -> {
                 try {
                     // Setup virtual mouse right before launching
@@ -199,6 +206,7 @@ public class MainActivity extends BaseActivity {
         loggerView = findViewById(R.id.mainLoggerView);
         mControlLayout = findViewById(R.id.main_control_layout);
         touchCharInput = findViewById(R.id.mainTouchCharInput);
+        mDrawerPullButton = findViewById(R.id.drawer_button);
     }
 
     @Override

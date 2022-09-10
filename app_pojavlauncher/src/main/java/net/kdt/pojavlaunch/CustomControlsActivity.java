@@ -1,11 +1,15 @@
 package net.kdt.pojavlaunch;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+
 import android.app.Activity;
 import android.content.*;
+import android.net.Uri;
 import android.os.*;
 
 import androidx.appcompat.app.*;
 
+import android.view.View;
 import android.widget.*;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -30,18 +34,17 @@ public class CustomControlsActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("fromMainActivity", false)) {
-            // TODO translucent!
-            // setTheme(androidx.appcompat.R.style.Theme_AppCompat_Translucent);
-        }
-        
 		setContentView(R.layout.activity_custom_controls);
 
 		mControlLayout = findViewById(R.id.customctrl_controllayout);
 		mDrawerLayout = findViewById(R.id.customctrl_drawerlayout);
 		mDrawerNavigationView = findViewById(R.id.customctrl_navigation_view);
+		View mPullDrawerButton = findViewById(R.id.drawer_button);
 
-		mDrawerNavigationView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu_customcontrol)));
+		mPullDrawerButton.setOnClickListener(v -> mDrawerLayout.openDrawer(mDrawerNavigationView));
+		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+		mDrawerNavigationView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu_customcontrol_customactivity)));
 		mDrawerNavigationView.setOnItemClickListener((parent, view, position, id) -> {
 			switch(position) {
 				case 0:
@@ -58,6 +61,21 @@ public class CustomControlsActivity extends BaseActivity {
 					break;
 				case 4:
 					dialogSelectDefaultCtrl(mControlLayout);
+					break;
+				case 5: // Saving the currently shown control
+					mControlLayout.save(Tools.DIR_DATA + "/files/" + sSelectedName + ".json");
+
+					Uri contentUri = getUriForFile(getBaseContext(), "share_file", new File(Tools.DIR_DATA, "/files/" + sSelectedName + ".json"));
+
+					Intent shareIntent = new Intent();
+					shareIntent.setAction(Intent.ACTION_SEND);
+					shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+					shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+					shareIntent.setType("application/json");
+					startActivity(shareIntent);
+
+					Intent sendIntent = Intent.createChooser(shareIntent, sSelectedName);
+					startActivity(sendIntent);
 					break;
 			}
 			mDrawerLayout.closeDrawers();

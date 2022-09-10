@@ -353,4 +353,10 @@ public class ControlLayout extends FrameLayout {
 		addSubButton.hide();
 		mHandleView.hide();
 	}
+
+	public void save(String path){
+		try {
+			mLayout.save(path);
+		} catch (IOException e) {Log.e("ControlLayout", "Failed to save the layout at:" + path);}
+	}
 }

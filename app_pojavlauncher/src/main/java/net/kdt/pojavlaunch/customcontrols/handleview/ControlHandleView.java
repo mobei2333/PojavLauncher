@@ -51,6 +51,7 @@ public class ControlHandleView extends View {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(size, size);
         setLayoutParams(params);
         setBackground(mDrawable);
+        setElevation(3);
     }
 
     public void setControlButton(ControlButton controlButton){
