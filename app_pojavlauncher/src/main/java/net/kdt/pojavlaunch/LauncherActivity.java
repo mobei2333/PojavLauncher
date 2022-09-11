@@ -2,12 +2,7 @@ package net.kdt.pojavlaunch;
 
 import static android.os.Build.VERSION_CODES.P;
 
-import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
-
 import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
@@ -15,9 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,7 +23,6 @@ import androidx.fragment.app.FragmentContainerView;
 
 import com.kdt.mcgui.ProgressLayout;
 import com.kdt.mcgui.mcAccountSpinner;
-import com.kdt.mcgui.mcVersionSpinner;
 
 import net.kdt.pojavlaunch.fragments.LocalLoginFragment;
 import net.kdt.pojavlaunch.fragments.MicrosoftLoginFragment;
@@ -48,7 +40,6 @@ import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
-import java.io.File;
 import java.util.List;
 
 public class LauncherActivity extends BaseActivity {

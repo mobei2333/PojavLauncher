@@ -10,16 +10,20 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import net.kdt.pojavlaunch.JMinecraftVersionList;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.FilteredSubList;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class VersionListAdapter extends BaseExpandableListAdapter implements ExpandableListAdapter {
     
     private final LayoutInflater mLayoutInflater;
-    
-    private final String[] mGroups = new String[]{"Release", "Snapshot","Old Beta", "Old Alpha"};
+
+    private final String[] mGroups;
     private final List<JMinecraftVersionList.Version> mReleaseList, mSnapshotList, mBetaList, mAlphaList;
+    private final String[] mInstalledVersions;
     private final List<JMinecraftVersionList.Version>[] mData;
 
     public VersionListAdapter(JMinecraftVersionList versionList, Context ctx){
@@ -30,7 +34,15 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
         mBetaList = new FilteredSubList<>(versionList.versions, item -> item.type.equals("old_beta"));
         mAlphaList = new FilteredSubList<>(versionList.versions, item -> item.type.equals("old_alpha"));
 
-        mData = new List[]{mReleaseList, mSnapshotList, mBetaList, mAlphaList};
+        // Query installed versions
+        mInstalledVersions = new File(Tools.DIR_GAME_NEW + "/versions").list();
+        if(!areInstalledVersionsAvailable()){
+            mGroups = new String[]{"Release", "Snapshot","Old Beta", "Old Alpha"};
+            mData = new List[]{ mReleaseList, mSnapshotList, mBetaList, mAlphaList};
+        }else{
+            mGroups = new String[]{"Installed versions", "Release", "Snapshot","Old Beta", "Old Alpha"};
+            mData = new List[]{Arrays.asList(mInstalledVersions), mReleaseList, mSnapshotList, mBetaList, mAlphaList};
+        }
     }
 
     @Override
@@ -49,8 +61,11 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return mData[groupPosition].get(childPosition);
+    public String getChild(int groupPosition, int childPosition) {
+        if(isInstalledVersionSelected(groupPosition)){
+            return mInstalledVersions[childPosition];
+        }
+        return mData[groupPosition].get(childPosition).id;
     }
 
     @Override
@@ -82,8 +97,13 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         if(convertView == null)
             convertView = mLayoutInflater.inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+        if(isInstalledVersionSelected(groupPosition)){
+            // Installed version is a String inside
+            ((TextView) convertView).setText(mInstalledVersions[childPosition]);
+        }else{
+            ((TextView) convertView).setText(mData[groupPosition].get(childPosition).id);
+        }
 
-        ((TextView) convertView).setText(mData[groupPosition].get(childPosition).id);
 
         return convertView;
     }
@@ -91,5 +111,13 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    private boolean areInstalledVersionsAvailable(){
+        return !(mInstalledVersions == null || mInstalledVersions.length == 0);
+    }
+
+    private boolean isInstalledVersionSelected(int groupPosition){
+        return groupPosition == 0 && areInstalledVersionsAvailable();
     }
 }

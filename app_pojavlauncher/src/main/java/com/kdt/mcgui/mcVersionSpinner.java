@@ -2,7 +2,7 @@ package com.kdt.mcgui;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
+import static net.kdt.pojavlaunch.fragments.ProfileEditorFragment.DELETED_PROFILE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,8 +28,7 @@ import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.profiles.ProfileAdapter;
-import net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment;
-import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
+import net.kdt.pojavlaunch.fragments.ProfileEditorFragment;
 
 /**
  * A class implementing custom spinner like behavior, notably:

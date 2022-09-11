@@ -1,7 +1,5 @@
 package net.kdt.pojavlaunch.fragments;
 
-import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,15 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
-import com.kdt.mcgui.mcVersionSpinner;
-
 import net.kdt.pojavlaunch.CustomControlsActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
-import net.kdt.pojavlaunch.extra.ExtraListener;
-import net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment;
 
 public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";

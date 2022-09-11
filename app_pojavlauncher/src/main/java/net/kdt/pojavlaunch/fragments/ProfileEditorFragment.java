@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.profiles.fragment;
+package net.kdt.pojavlaunch.fragments;
 
 import static net.kdt.pojavlaunch.profiles.ProfileAdapter.CREATE_PROFILE_MAGIC;
 
@@ -127,7 +127,7 @@ public class ProfileEditorFragment extends Fragment {
             AlertDialog dialog = builder.show();
 
             expandableListView.setOnChildClickListener((parent, v1, groupPosition, childPosition, id) -> {
-                String version = ((JMinecraftVersionList.Version) adapter.getChild(groupPosition, childPosition)).id;
+                String version = ((String) adapter.getChild(groupPosition, childPosition));
                 mTempProfile.lastVersionId = version;
                 mDefaultVersion.setText(version);
                 dialog.dismiss();
