@@ -201,6 +201,7 @@
     <string name="customctrl_addbutton">Add button</string>
     <string name="customctrl_addbutton_drawer">Add button drawer</string>
     <string name="customctrl_addsubbutton">Add sub-button</string>
+    <string name="customctrl_addjoystick">Add joystick</string>
     <string name="customctrl_add_subbutton_message">Sub-button n°%d has been added !</string>
 
     <string name="customctrl_selectdefault">Select default Control json</string>

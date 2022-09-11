@@ -175,7 +175,7 @@ public class ControlDrawer extends ControlButton {
     }
 
     @Override
-    public void loadValues(EditControlPopup editControlPopup) {
+    public void loadEditValues(EditControlPopup editControlPopup) {
         editControlPopup.loadValues(drawerData);
     }
 

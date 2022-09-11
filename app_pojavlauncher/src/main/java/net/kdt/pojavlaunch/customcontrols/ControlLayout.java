@@ -17,6 +17,7 @@ import net.kdt.pojavlaunch.*;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlJoystick;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlSubButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.AddSubButton;
 import net.kdt.pojavlaunch.customcontrols.handleview.CloneButton;
@@ -87,6 +88,11 @@ public class ControlLayout extends FrameLayout {
 			if(mModifiable) drawer.areButtonsVisible = true;
 		}
 
+		// Joystick(s)
+		for(ControlData joystick : controlLayout.mJoystickDataList){
+			addJoystickView(joystick);
+		}
+
         mLayout.scaledAt = LauncherPreferences.PREF_BUTTONSIZE;
 
 		setModified(false);
@@ -147,7 +153,7 @@ public class ControlLayout extends FrameLayout {
 		addSubView(drawer, drawer.getDrawerData().buttonProperties.get(drawer.getDrawerData().buttonProperties.size()-1 ));
 	}
 
-	public void addSubView(ControlDrawer drawer, ControlData controlButton){
+	private void addSubView(ControlDrawer drawer, ControlData controlButton){
 		final ControlSubButton view = new ControlSubButton(this, controlButton, drawer);
 
 		if (!mModifiable) {
@@ -162,6 +168,16 @@ public class ControlLayout extends FrameLayout {
 		addView(view);
 
 		setModified(true);
+	}
+
+	// JOYSTICK BUTTON
+	public void addJoystickButton(ControlData data){
+		mLayout.mJoystickDataList.add(data);
+		addJoystickView(data);
+	}
+
+	private void addJoystickView(ControlData data){
+		addView(new ControlJoystick(this, data));
 	}
 
     private void removeAllButtons() {
@@ -254,16 +270,16 @@ public class ControlLayout extends FrameLayout {
 	 * Load the layout if needed, and pass down the burden of filling values
 	 * to the button at hand.
 	 */
-	public void editControlButton(ControlButton button){
+	public void editControlButton(ControlInterface button){
 		if(mControlPopup == null)
 			mControlPopup = new EditControlPopup(getContext(), this);
 		mControlPopup.internalChanges = true;
 		mControlPopup.setCurrentlyEditedButton(button);
-		button.loadValues(mControlPopup);
+		button.loadEditValues(mControlPopup);
 
 		mControlPopup.internalChanges = false;
 
-		mControlPopup.appear(button.getX() < currentDisplayMetrics.widthPixels/2f);
+		mControlPopup.appear(button.getControlView().getX() + button.getControlView().getWidth()/2f < currentDisplayMetrics.widthPixels/2f);
 		mControlPopup.disappearColor();
 
 

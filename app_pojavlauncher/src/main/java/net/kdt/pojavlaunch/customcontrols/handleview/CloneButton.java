@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 
 public class CloneButton extends FloatAroundButton {
     public CloneButton(Context context) {super(context);}
@@ -25,11 +26,11 @@ public class CloneButton extends FloatAroundButton {
         setText("CLONE");
     }
 
-    private ControlButton mCurrentlySelectedButton = null;
+    private ControlInterface mCurrentlySelectedButton = null;
 
     public void setFollowedView(View view) {
         super.setFollowedView(view);
-        mCurrentlySelectedButton = (ControlButton) view;
+        mCurrentlySelectedButton = (ControlInterface) view;
     }
 
 
@@ -38,6 +39,6 @@ public class CloneButton extends FloatAroundButton {
         if(mCurrentlySelectedButton == null) return;
 
         mCurrentlySelectedButton.cloneButton();
-        ((ControlLayout) mCurrentlySelectedButton.getParent()).removeEditWindow();
+        mCurrentlySelectedButton.getControlLayoutParent().removeEditWindow();
     }
 }

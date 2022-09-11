@@ -49,7 +49,7 @@ public class ControlSubButton extends ControlButton {
         }
 
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-            mCanTriggerLongClick = true;
+            //mCanTriggerLongClick = true;
             onLongClick(this);
         }
         return true;

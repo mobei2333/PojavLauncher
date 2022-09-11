@@ -47,22 +47,13 @@ public class CustomControlsActivity extends BaseActivity {
 		mDrawerNavigationView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu_customcontrol_customactivity)));
 		mDrawerNavigationView.setOnItemClickListener((parent, view, position, id) -> {
 			switch(position) {
-				case 0:
-					mControlLayout.addControlButton(new ControlData("New"));
-					break;
-				case 1:
-					mControlLayout.addDrawer(new ControlDrawerData());
-					break;
-				case 2:
-					load(mControlLayout);
-					break;
-				case 3:
-					save(false, mControlLayout);
-					break;
-				case 4:
-					dialogSelectDefaultCtrl(mControlLayout);
-					break;
-				case 5: // Saving the currently shown control
+				case 0: mControlLayout.addControlButton(new ControlData("New")); break;
+				case 1: mControlLayout.addDrawer(new ControlDrawerData()); break;
+				case 2: mControlLayout.addJoystickButton(new ControlData()); break;
+				case 3: load(mControlLayout); break;
+				case 4: save(false, mControlLayout); break;
+				case 5: dialogSelectDefaultCtrl(mControlLayout); break;
+				case 6: // Saving the currently shown control
 					mControlLayout.save(Tools.DIR_DATA + "/files/" + sSelectedName + ".json");
 
 					Uri contentUri = getUriForFile(getBaseContext(), "share_file", new File(Tools.DIR_DATA, "/files/" + sSelectedName + ".json"));

@@ -18,6 +18,7 @@ import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlLayout;
+import net.kdt.pojavlaunch.customcontrols.handleview.EditControlPopup;
 
 import org.lwjgl.glfw.CallbackBridge;
 
@@ -31,11 +32,21 @@ public interface ControlInterface extends View.OnLongClickListener {
     View getControlView();
     ControlData getProperties();
 
+    /** Remove the button presence from the CustomControl object
+     * You need to use {getControlParent()} for this.
+     */
     void removeButton();
+
+    /** Duplicate the data of the button and add a view with the duplicated data
+     * Relies on the ControlLayout for the implementation.
+     */
     void cloneButton();
 
     void setVisible(boolean isVisible);
     void sendKeyPresses(boolean isDown);
+
+    /** Load the values and hide non useful forms */
+    void loadEditValues(EditControlPopup editControlPopup);
 
 
     default ControlLayout getControlLayoutParent(){
@@ -323,5 +334,17 @@ public interface ControlInterface extends View.OnLongClickListener {
             //setModified(true);
             //TODO
         });
+    }
+
+    @Override
+    default boolean onLongClick(View v){
+        if (getControlLayoutParent().getModifiable()) {
+            getControlLayoutParent().editControlButton(this);
+            getControlLayoutParent().cloneButton.setFollowedView(getControlView());
+            getControlLayoutParent().deleteButton.setFollowedView(getControlView());
+            getControlLayoutParent().addSubButton.setFollowedView(getControlView());
+        }
+
+        return true;
     }
 }

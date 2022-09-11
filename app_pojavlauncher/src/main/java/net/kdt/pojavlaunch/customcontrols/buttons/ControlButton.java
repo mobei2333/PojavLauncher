@@ -24,7 +24,6 @@ public class ControlButton extends TextView implements ControlInterface {
     protected ControlData mProperties;
 
 
-    protected boolean mCanTriggerLongClick = true;
     protected boolean mIsToggled = false;
     protected boolean mIsPointerOutOfBounds = false;
 
@@ -39,7 +38,7 @@ public class ControlButton extends TextView implements ControlInterface {
 
         //When a button is created, the width/height has yet to be processed to fit the scaling.
         setProperties(preProcessProperties(properties, layout));
-        setModified(false);
+
         injectTouchEventBehavior();
         injectLayoutParamBehavior();
     }
@@ -69,13 +68,6 @@ public class ControlButton extends TextView implements ControlInterface {
         setText(properties.name);
     }
 
-
-    private void setModified(boolean modified) {
-        if (getParent() != null)
-            ((ControlLayout) getParent()).setModified(modified);
-    }
-
-
     public void setVisible(boolean isVisible){
         if(mProperties.isHideable)
             setVisibility(isVisible ? VISIBLE : GONE);
@@ -88,19 +80,8 @@ public class ControlButton extends TextView implements ControlInterface {
             canvas.drawRoundRect(0, 0, getWidth(), getHeight(), mProperties.cornerRadius, mProperties.cornerRadius, mRectPaint);
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        if (mCanTriggerLongClick && getControlLayoutParent().getModifiable()) {
-            ((ControlLayout)getParent()).editControlButton(this);
-            getControlLayoutParent().cloneButton.setFollowedView(this);
-            getControlLayoutParent().deleteButton.setFollowedView(this);
-            getControlLayoutParent().addSubButton.setFollowedView(this);
-        }
-        
-        return true;
-    }
 
-    public void loadValues(EditControlPopup editControlPopup){
+    public void loadEditValues(EditControlPopup editControlPopup){
         editControlPopup.loadValues(getProperties());
     }
 

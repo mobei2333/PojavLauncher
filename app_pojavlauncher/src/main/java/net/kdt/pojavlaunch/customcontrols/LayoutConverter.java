@@ -28,10 +28,13 @@ public class LayoutConverter {
                 CustomControls layout = LayoutConverter.convertV2Layout(layoutJobj);
                 layout.save(jsonPath);
                 return layout;
-            }else if (layoutJobj.getInt("version") == 3 || layoutJobj.getInt("version") == 4) {
-                return Tools.GLOBAL_GSON.fromJson(jsonLayoutData, CustomControls.class);
             }else{
-                return null;
+                int version = layoutJobj.getInt("version");
+                if (version >= 3 && version <= 5) {
+                    return Tools.GLOBAL_GSON.fromJson(jsonLayoutData, CustomControls.class);
+                }else{
+                    return null;
+                }
             }
         }catch (JSONException e) {
             throw new JsonSyntaxException("Failed to load",e);

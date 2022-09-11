@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 
 public class DeleteButton extends FloatAroundButton {
     public DeleteButton(Context context) {super(context);}
@@ -24,12 +25,12 @@ public class DeleteButton extends FloatAroundButton {
         setText("DELETE");
     }
 
-    private ControlButton mCurrentlySelectedButton = null;
+    private ControlInterface mCurrentlySelectedButton = null;
 
     @Override
     public void setFollowedView(View view) {
         super.setFollowedView(view);
-        mCurrentlySelectedButton = (ControlButton) view;
+        mCurrentlySelectedButton = (ControlInterface) view;
     }
 
     @Override

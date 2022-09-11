@@ -16,6 +16,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 
 public class ControlHandleView extends View {
     public ControlHandleView(Context context) {
@@ -29,18 +30,18 @@ public class ControlHandleView extends View {
     }
 
     private final Drawable mDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_view_handle, getContext().getTheme());
-    private ControlButton mView;
+    private ControlInterface mView;
     private float mXOffset, mYOffset;
     private final ViewTreeObserver.OnPreDrawListener mPositionListener = new ViewTreeObserver.OnPreDrawListener() {
         @Override
         public boolean onPreDraw() {
-            if(mView == null || !mView.isShown()){
+            if(mView == null || !mView.getControlView().isShown()){
                 hide();
                 return true;
             }
 
-            setX(mView.getX() + mView.getWidth());
-            setY(mView.getY() + mView.getHeight());
+            setX(mView.getControlView().getX() + mView.getControlView().getWidth());
+            setY(mView.getControlView().getY() + mView.getControlView().getHeight());
             return true;
         }
     };
@@ -54,15 +55,15 @@ public class ControlHandleView extends View {
         setElevation(3);
     }
 
-    public void setControlButton(ControlButton controlButton){
-        if(mView != null) mView.getViewTreeObserver().removeOnPreDrawListener(mPositionListener);
+    public void setControlButton(ControlInterface controlInterface){
+        if(mView != null) mView.getControlView().getViewTreeObserver().removeOnPreDrawListener(mPositionListener);
 
         setVisibility(VISIBLE);
-        mView = controlButton;
-        mView.getViewTreeObserver().addOnPreDrawListener(mPositionListener);
+        mView = controlInterface;
+        mView.getControlView().getViewTreeObserver().addOnPreDrawListener(mPositionListener);
 
-        setX(controlButton.getX() + controlButton.getWidth());
-        setY(controlButton.getY() + controlButton.getHeight());
+        setX(controlInterface.getControlView().getX() + controlInterface.getControlView().getWidth());
+        setY(controlInterface.getControlView().getY() + controlInterface.getControlView().getHeight());
     }
 
     @Override
@@ -76,12 +77,12 @@ public class ControlHandleView extends View {
                 setX(getX() + event.getX() - mXOffset);
                 setY(getY() + event.getY() - mYOffset);
 
-                System.out.println(getX() - mView.getX());
-                System.out.println(getY() - mView.getY());
+                System.out.println(getX() - mView.getControlView().getX());
+                System.out.println(getY() - mView.getControlView().getY());
 
 
-                mView.getProperties().setWidth(getX() - mView.getX());
-                mView.getProperties().setHeight(getY() - mView.getY());
+                mView.getProperties().setWidth(getX() - mView.getControlView().getX());
+                mView.getProperties().setHeight(getY() - mView.getControlView().getY());
                 mView.regenerateDynamicCoordinates();
                 break;
         }
@@ -91,7 +92,7 @@ public class ControlHandleView extends View {
 
     public void hide(){
         if(mView != null)
-            mView.getViewTreeObserver().removeOnPreDrawListener(mPositionListener);
+            mView.getControlView().getViewTreeObserver().removeOnPreDrawListener(mPositionListener);
         setVisibility(GONE);
     }
 }

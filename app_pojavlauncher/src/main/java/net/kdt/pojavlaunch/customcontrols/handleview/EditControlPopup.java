@@ -37,6 +37,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlButton;
 import net.kdt.pojavlaunch.customcontrols.buttons.ControlDrawer;
+import net.kdt.pojavlaunch.customcontrols.buttons.ControlInterface;
 
 /**
  * Class providing a sort of popup on top of a Layout, allowing to edit a given ControlButton
@@ -51,7 +52,7 @@ public class EditControlPopup {
     private boolean mDisplaying = false;
     private boolean mDisplayingColor = false;
     public boolean internalChanges = false; // True when we programmatically change stuff.
-    private ControlButton mCurrentlyEditedButton;
+    private ControlInterface mCurrentlyEditedButton;
     private final int mMargin;
     private final View.OnLayoutChangeListener mLayoutChangedListener = new View.OnLayoutChangeListener() {
         @Override
@@ -82,7 +83,7 @@ public class EditControlPopup {
     protected String[] mSpecialArray;
 
     // Decorative textviews
-    private TextView mOrientationTextView, mMappingTextView;
+    private TextView mOrientationTextView, mMappingTextView, mNameTextView, mCornerRadiusTextView;
 
 
 
@@ -288,6 +289,28 @@ public class EditControlPopup {
         mToggleSwitch.setVisibility(View.GONE);
     }
 
+    /** Load values for the joystick */
+    public void loadJoystickValues(ControlData data){
+        loadValues(data);
+
+        mMappingTextView.setVisibility(GONE);
+        mKeycodeSpinners[0].setVisibility(GONE);
+        mKeycodeSpinners[1].setVisibility(GONE);
+        mKeycodeSpinners[2].setVisibility(GONE);
+        mKeycodeSpinners[3].setVisibility(GONE);
+
+        mNameTextView.setVisibility(GONE);
+        mNameEditText.setVisibility(GONE);
+
+        mCornerRadiusTextView.setVisibility(GONE);
+        mCornerRadiusSeekbar.setVisibility(GONE);
+        mCornerRadiusPercentTextView.setVisibility(GONE);
+
+        mSwipeableSwitch.setVisibility(View.GONE);
+        mPassthroughSwitch.setVisibility(View.GONE);
+        mToggleSwitch.setVisibility(View.GONE);
+    }
+
 
     private void bindLayout(){
         mRootView = mScrollView.findViewById(R.id.edit_layout);
@@ -314,6 +337,8 @@ public class EditControlPopup {
         //Decorative stuff
         mMappingTextView = mScrollView.findViewById(R.id.editMapping_textView);
         mOrientationTextView = mScrollView.findViewById(R.id.editOrientation_textView);
+        mNameTextView = mScrollView.findViewById(R.id.editName_textView);
+        mCornerRadiusTextView = mScrollView.findViewById(R.id.editCornerRadius_textView);
     }
 
     /**
@@ -332,7 +357,9 @@ public class EditControlPopup {
                 if(internalChanges) return;
 
                 mCurrentlyEditedButton.getProperties().name = s.toString();
-                mCurrentlyEditedButton.setText(s);
+
+                // Cheap and unoptimized, doesn't break the abstraction layer
+                mCurrentlyEditedButton.setProperties(mCurrentlyEditedButton.getProperties(), false);
             }
         });
 
@@ -384,7 +411,7 @@ public class EditControlPopup {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(internalChanges) return;
                 mCurrentlyEditedButton.getProperties().opacity = mAlphaSeekbar.getProgress()/100f;
-                mCurrentlyEditedButton.setAlpha(mAlphaSeekbar.getProgress()/100f);
+                mCurrentlyEditedButton.getControlView().setAlpha(mAlphaSeekbar.getProgress()/100f);
                 setPercentageText(mAlphaPercentTextView, progress);
             }
 
@@ -491,10 +518,10 @@ public class EditControlPopup {
         return out;
     }
 
-    public void setCurrentlyEditedButton(ControlButton button){
+    public void setCurrentlyEditedButton(ControlInterface button){
         if(mCurrentlyEditedButton != null)
-            mCurrentlyEditedButton.removeOnLayoutChangeListener(mLayoutChangedListener);
+            mCurrentlyEditedButton.getControlView().removeOnLayoutChangeListener(mLayoutChangedListener);
         mCurrentlyEditedButton = button;
-        mCurrentlyEditedButton.addOnLayoutChangeListener(mLayoutChangedListener);
+        mCurrentlyEditedButton.getControlView().addOnLayoutChangeListener(mLayoutChangedListener);
     }
 }
