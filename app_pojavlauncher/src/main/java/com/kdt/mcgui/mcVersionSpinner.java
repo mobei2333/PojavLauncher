@@ -77,7 +77,7 @@ public class mcVersionSpinner extends ExtendedTextView {
         // Setup various attributes
         setGravity(Gravity.CENTER_VERTICAL);
         int startPadding = getContext().getResources().getDimensionPixelOffset(R.dimen._17sdp);
-        int endPadding = getContext().getResources().getDimensionPixelOffset(R.dimen._24sdp);
+        int endPadding = getContext().getResources().getDimensionPixelOffset(R.dimen._5sdp);
         setPaddingRelative(startPadding, 0, endPadding, 0);
         setCompoundDrawablePadding(startPadding);
         int profileIndex;
