@@ -2,6 +2,8 @@ package com.kdt.mcgui;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+import static net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment.DELETED_PROFILE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -22,6 +24,8 @@ import com.kdt.extended.ExtendedTextView;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.extra.ExtraConstants;
+import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.profiles.ProfileAdapter;
 import net.kdt.pojavlaunch.profiles.fragment.ProfileEditorFragment;
@@ -76,7 +80,14 @@ public class mcVersionSpinner extends ExtendedTextView {
         int endPadding = getContext().getResources().getDimensionPixelOffset(R.dimen._24sdp);
         setPaddingRelative(startPadding, 0, endPadding, 0);
         setCompoundDrawablePadding(startPadding);
-        int profileIndex = mProfileAdapter.resolveProfileIndex(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
+        int profileIndex;
+        String extra_value = (String) ExtraCore.consumeValue(ExtraConstants.REFRESH_VERSION_SPINNER);
+        if(extra_value != null){
+            profileIndex = extra_value.equals(DELETED_PROFILE) ? 0
+                    : getProfileAdapter().resolveProfileIndex(extra_value);
+        }else {
+            profileIndex = mProfileAdapter.resolveProfileIndex(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
+        }
         if (profileIndex >= 0) setSelection(profileIndex);
 
         // Popup window behavior

@@ -19,6 +19,8 @@ public class ExtraConstants {
     public static final String FILE_SELECTOR = "file_selector";
     /* ExtraCore constant: Need to refresh the version spinner, selecting the uuid at the same time. Can be DELETED_PROFILE */
     public static final String REFRESH_VERSION_SPINNER = "refresh_version";
+    /* ExtraCore Constant: When we want to launch the game */
+    public static final String LAUNCH_GAME = "launch_game";
 
 
 

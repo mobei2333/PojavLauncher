@@ -57,27 +57,16 @@ public class LauncherActivity extends BaseActivity {
     private final int REQUEST_STORAGE_REQUEST_CODE = 1;
     private final Object mLockStoragePerm = new Object();
 
-    private mcVersionSpinner mVersionSpinner;
+
     private mcAccountSpinner mAccountSpinner;
     private FragmentContainerView mFragmentView;
     private ImageButton mSettingsButton, mDeleteAccountButton;
-    private Button mPlayButton;
     private ProgressLayout mProgressLayout;
 
 
     /* Listener for the back button in settings */
     private final ExtraListener<String> mBackPreferenceListener = (key, value) -> {
         if(value.equals("true")) onBackPressed();
-        return false;
-    };
-
-
-    private final ExtraListener<String> mRefreshVersion = (key, value) -> {
-        mVersionSpinner.getProfileAdapter().notifyDataSetChanged();
-        mVersionSpinner.setProfileSelection(value.equals(DELETED_PROFILE)
-                ? 0
-                : mVersionSpinner.getProfileAdapter().resolveProfileIndex(value));
-
         return false;
     };
 
@@ -109,6 +98,44 @@ public class LauncherActivity extends BaseActivity {
                 .show();
     };
 
+    private final ExtraListener<Boolean> mLaunchGameListener = (key, value) -> {
+        if(mProgressLayout.hasProcesses()){
+            Toast.makeText(this, "Tasks are in progress, please wait", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
+        if (LauncherProfiles.mainProfileJson == null  || LauncherProfiles.mainProfileJson.profiles == null
+                || !LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)){
+            Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
+        if (prof == null || prof.lastVersionId == null){
+            Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if(mAccountSpinner.getSelectedAccount() == null){
+            Toast.makeText(this, "No selected minecraft account", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        new AsyncMinecraftDownloader(this, AsyncMinecraftDownloader.findVersion(prof.lastVersionId), () -> runOnUiThread(() -> {
+            try {
+                Intent mainIntent = new Intent(getBaseContext(), MainActivity.class);
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                startActivity(mainIntent);
+                finish();
+                Log.i("ActCheck","mainActivity finishing=" + isFinishing() + ", destroyed=" + isDestroyed());
+            } catch (Throwable e) {
+                Tools.showError(getBaseContext(), e);
+            }
+        }));
+        return false;
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +149,8 @@ public class LauncherActivity extends BaseActivity {
         mDeleteAccountButton.setOnClickListener(mAccountDeleteButtonListener);
         ExtraCore.addExtraListener(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.addExtraListener(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
-        ExtraCore.addExtraListener(ExtraConstants.REFRESH_VERSION_SPINNER, mRefreshVersion);
+
+        ExtraCore.addExtraListener(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
 
         AsyncAssetManager manager = new AsyncAssetManager();
         manager.unpackRuntime(this.getAssets(), false);
@@ -133,47 +161,6 @@ public class LauncherActivity extends BaseActivity {
             ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions);
         });
 
-
-        mPlayButton.setOnClickListener(v -> {
-            // Check various parameters before starting a download
-            //TODO you can technically spam the download in a short time window
-            if(mProgressLayout.hasProcesses()){
-                Toast.makeText(this, "Tasks are in progress, please wait", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,"");
-            if (LauncherProfiles.mainProfileJson == null  || LauncherProfiles.mainProfileJson.profiles == null
-                    || !LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)){
-                Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
-                return;
-            }
-            MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
-            if (prof == null || prof.lastVersionId == null){
-                Toast.makeText(this, "No selected version", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if(mAccountSpinner.getSelectedAccount() == null){
-                Toast.makeText(this, "No selected minecraft account", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            new AsyncMinecraftDownloader(this, AsyncMinecraftDownloader.findVersion(prof.lastVersionId), () -> runOnUiThread(() -> {
-                try {
-                    Intent mainIntent = new Intent(getBaseContext(), MainActivity.class);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    startActivity(mainIntent);
-                    finish();
-                    Log.i("ActCheck","mainActivity finishing=" + isFinishing() + ", destroyed=" + isDestroyed());
-                } catch (Throwable e) {
-                    Tools.showError(getBaseContext(), e);
-                }
-            }));
-        });
-
-
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
     }
@@ -183,7 +170,7 @@ public class LauncherActivity extends BaseActivity {
         super.onDestroy();
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
-        ExtraCore.removeExtraListenerFromValue(ExtraConstants.REFRESH_VERSION_SPINNER, mRefreshVersion);
+        ExtraCore.removeExtraListenerFromValue(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
     }
 
     @Override
@@ -286,12 +273,10 @@ public class LauncherActivity extends BaseActivity {
 
     /** Stuff all the view boilerplate here */
     private void bindViews(){
-        mVersionSpinner = findViewById(R.id.mc_version_spinner);
         mFragmentView = findViewById(R.id.container_fragment);
         mSettingsButton = findViewById(R.id.setting_button);
         mDeleteAccountButton = findViewById(R.id.delete_account_button);
         mAccountSpinner = findViewById(R.id.account_spinner);
-        mPlayButton = findViewById(R.id.play_button);
         mProgressLayout = findViewById(R.id.progress_layout);
     }
 
