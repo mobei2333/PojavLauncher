@@ -67,8 +67,7 @@
 		android:layout_height="@dimen/_52sdp"
 		android:background="?android:attr/selectableItemBackground"
 
-
-		android:src="@drawable/ic_sharp_settings_24"
+		android:src="@drawable/ic_edit_profile"
 		app:layout_constraintBottom_toBottomOf="@+id/mc_version_spinner"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="@+id/mc_version_spinner" />
