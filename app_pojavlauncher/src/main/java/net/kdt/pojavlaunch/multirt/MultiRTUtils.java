@@ -78,7 +78,7 @@ public class MultiRTUtils {
         return result;
     }
 
-    public static void installRuntimeNamed(String nativeLibDir, InputStream runtimeInputStream, String name, RuntimeProgressReporter progressReporter) throws IOException {
+    public static void installRuntimeNamed(String nativeLibDir, InputStream runtimeInputStream, String name) throws IOException {
         File dest = new File(RUNTIME_FOLDER,"/"+name);
         if(dest.exists()) FileUtils.deleteDirectory(dest);
         dest.mkdirs();

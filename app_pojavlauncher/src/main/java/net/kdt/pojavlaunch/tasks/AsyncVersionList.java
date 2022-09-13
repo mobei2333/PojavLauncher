@@ -1,5 +1,6 @@
 package net.kdt.pojavlaunch.tasks;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 import static net.kdt.pojavlaunch.utils.DownloadUtils.downloadString;
 
 import android.util.Log;
@@ -30,7 +31,7 @@ import java.util.Collections;
 public class AsyncVersionList {
 
     public void getVersionList(@Nullable VersionDoneListener listener){
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             File versionFile = new File(Tools.DIR_DATA + "/version_list.json");
             JMinecraftVersionList versionList = null;
             try{
@@ -53,8 +54,7 @@ public class AsyncVersionList {
 
             if(listener != null)
                 listener.onVersionDone(versionList);
-
-        }).start();
+        });
     }
 
 

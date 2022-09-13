@@ -1,5 +1,6 @@
 package net.kdt.pojavlaunch.tasks;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 import static net.kdt.pojavlaunch.Tools.ENABLE_DEV_FEATURES;
 import static net.kdt.pojavlaunch.utils.DownloadUtils.downloadFileMonitored;
 
@@ -52,10 +53,10 @@ public class AsyncMinecraftDownloader {
 
     public AsyncMinecraftDownloader(@NonNull Activity activity, JMinecraftVersionList.Version version,
                                     @NonNull DoneListener listener){
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             if(downloadGame(activity, version, version.id))
                 listener.onDownloadDone();
-        }).start();
+        });
     }
 
     private boolean downloadGame(@NonNull Activity activity, JMinecraftVersionList.Version verInfo, String versionName){

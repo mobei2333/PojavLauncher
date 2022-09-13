@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.authenticator.mojang;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
+
 import android.util.Log;
 
 import net.kdt.pojavlaunch.Tools;
@@ -18,7 +20,7 @@ public class InvalidateToken {
     }
 
     public void invalidate(MinecraftAccount account){
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             if(account == null) return;
             new File(Tools.DIR_ACCOUNT_NEW + "/" + account.username + ".json").delete();
 
@@ -30,8 +32,7 @@ public class InvalidateToken {
                     Log.e("InvalidateToken", e.toString());
                 }
             }
-
-        }).start();
+        });
     }
 
 }

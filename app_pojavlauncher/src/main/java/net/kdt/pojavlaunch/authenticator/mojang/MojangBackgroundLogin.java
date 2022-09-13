@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.authenticator.mojang;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -38,7 +40,7 @@ public class MojangBackgroundLogin {
     public void performLogin(@Nullable final ProgressListener progressListener,
                                          @Nullable final DoneListener doneListener,
                                          @Nullable final ErrorListener errorListener){
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             // Behavior is controlled by which constructor filled the private variables.
             // As it is unlikely that a user needs to login and refresh by starring hours at the UI
             notifyProgress(progressListener, 2);
@@ -67,11 +69,7 @@ public class MojangBackgroundLogin {
             notifyProgress(progressListener, 5);
             if(doneListener != null)
                 doneListener.onLoginDone(account);
-
-
-
-        }).start();
-
+        });
     }
 
     private MinecraftAccount performNewLogin() throws Throwable {

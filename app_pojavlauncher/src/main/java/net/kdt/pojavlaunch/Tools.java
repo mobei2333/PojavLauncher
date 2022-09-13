@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.P;
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_IGNORE_NOTCH;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_NOTCH_SIZE;
 
@@ -995,7 +996,7 @@ public final class Tools {
 
         final Uri uri = data.getData();
         alertDialog.setMessage(activity.getString(R.string.multirt_progress_caching));
-        new Thread(()->{
+        sExecutorService.execute(() -> {
             try {
                 final String name = getFileName(activity, uri);
                 final File modInstallerFile = new File(activity.getCacheDir(), name);
@@ -1011,29 +1012,23 @@ public final class Tools {
             }catch(IOException e) {
                 Tools.showError(activity, e);
             }
-        }).start();
+        });
     }
 
 
     public static void installRuntimeFromUri(Activity activity, Uri uri){
-        final ProgressDialog alertDialog = getWaitingDialog(activity);
-
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             try {
                 String name = getFileName(activity, uri);
                 MultiRTUtils.installRuntimeNamed(
                         NATIVE_LIB_DIR,
                         activity.getContentResolver().openInputStream(uri),
-                        name,
-                        (resid, stuff) -> activity.runOnUiThread(() -> alertDialog.setMessage(activity.getString(resid, stuff)))
-                );
+                        name);
 
                 MultiRTUtils.postPrepare(name);
             } catch (IOException e) {
                 Tools.showError(activity, e);
             }
-
-            activity.runOnUiThread(alertDialog::dismiss);
-        }).start();
+        });
     }
 }

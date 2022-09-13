@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.authenticator.microsoft;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
+
 import android.os.Looper;
 import android.util.Log;
 
@@ -58,7 +60,7 @@ public class MicrosoftBackgroundLogin {
     public void performLogin(@Nullable final ProgressListener progressListener,
                              @Nullable final DoneListener doneListener,
                              @Nullable final ErrorListener errorListener){
-        new Thread(() -> {
+        sExecutorService.execute(() -> {
             try {
                 notifyProgress(progressListener, 1);
                 String accessToken = acquireAccessToken(mIsRefresh, mAuthCode);
@@ -95,8 +97,7 @@ public class MicrosoftBackgroundLogin {
                 if(errorListener != null)
                     mHandler.post(() -> errorListener.onLoginError(e));
             }
-        }).start();
-
+        });
     }
 
     public String acquireAccessToken(boolean isRefresh, String authcode) throws IOException, JSONException {

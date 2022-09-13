@@ -1,5 +1,7 @@
 package net.kdt.pojavlaunch.multirt;
 
+import static net.kdt.pojavlaunch.PojavApplication.sExecutorService;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -92,24 +94,13 @@ public class RTRecyclerViewAdapter extends RecyclerView.Adapter<RTRecyclerViewAd
                     return;
                 }
 
-                final ProgressDialog barrier = new ProgressDialog(mContext);
-                barrier.setMessage(mContext.getString(R.string.global_waiting));
-                barrier.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                barrier.setCancelable(false);
-                barrier.show();
-                Thread t = new Thread(() -> {
+                sExecutorService.execute(() -> {
                     try {
                         MultiRTUtils.removeRuntimeNamed(mCurrentRuntime.name);
                     } catch (IOException e) {
                         Tools.showError(itemView.getContext(), e);
                     }
-                    view.post(() -> {
-                        if(isDefaultRuntime(mCurrentRuntime)) setDefault(MultiRTUtils.getRuntimes().get(0));
-                        barrier.dismiss();
-                        mConfigDialog.show();
-                    });
                 });
-                t.start();
 
             }else if(view.getId() == R.id.multirt_view_setdefaultbtn) {
                 if(mCurrentRuntime != null) {
