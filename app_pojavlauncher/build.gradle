@@ -135,7 +135,7 @@ dependencies {
 
     implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
 
-    implementation 'com.github.Mathias-Boulay:virtual-joystick-android:1.13.0'
+    implementation 'com.github.Mathias-Boulay:virtual-joystick-android:83b49a7f0c'
 
     
     // implementation 'com.intuit.sdp:sdp-android:1.0.5'

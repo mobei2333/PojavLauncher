@@ -35,11 +35,14 @@ public class ControlJoystick extends JoystickView implements ControlInterface{
     }
 
 
+    public final static int DIRECTION_FORWARD_LOCK = 8;
+
     private ControlData mControlData;
     private int mLastDirectionInt = GamepadJoystick.DIRECTION_NONE;
     private int mCurrentDirectionInt = GamepadJoystick.DIRECTION_NONE;
 
     // Directions keycode
+    private final int[] mDirectionForwardLock = new int[]{LwjglGlfwKeycode.GLFW_KEY_LEFT_CONTROL, LwjglGlfwKeycode.GLFW_KEY_W};
     private final int[] mDirectionForward = new int[]{LwjglGlfwKeycode.GLFW_KEY_W};
     private final int[] mDirectionRight = new int[]{LwjglGlfwKeycode.GLFW_KEY_D};
     private final int[] mDirectionBackward = new int[]{LwjglGlfwKeycode.GLFW_KEY_S};
@@ -50,6 +53,9 @@ public class ControlJoystick extends JoystickView implements ControlInterface{
         setProperties(preProcessProperties(data, layout));
         setDeadzone(40);
         setFixedCenter(false);
+        postDelayed(() -> setForwardLockDistance((int) (data.getHeight()* 0.66f)), 500);
+
+
 
         injectTouchEventBehavior();
         injectLayoutParamBehavior();
@@ -68,7 +74,13 @@ public class ControlJoystick extends JoystickView implements ControlInterface{
 
             @Override
             public void onForwardLock(boolean isLocked) {
+                mLastDirectionInt = mCurrentDirectionInt;
+                mCurrentDirectionInt = DIRECTION_FORWARD_LOCK;
 
+                if(mLastDirectionInt != mCurrentDirectionInt){
+                    sendDirectionalKeycode(mLastDirectionInt, false);
+                    sendDirectionalKeycode(mCurrentDirectionInt, true);
+                }
             }
         });
     }
@@ -153,6 +165,9 @@ public class ControlJoystick extends JoystickView implements ControlInterface{
             case DIRECTION_NORTH_WEST:
                 sendInput(mDirectionForward, isDown);
                 sendInput(mDirectionLeft, isDown);
+                break;
+            case DIRECTION_FORWARD_LOCK:
+                sendInput(mDirectionForwardLock, isDown);
                 break;
         }
     }
