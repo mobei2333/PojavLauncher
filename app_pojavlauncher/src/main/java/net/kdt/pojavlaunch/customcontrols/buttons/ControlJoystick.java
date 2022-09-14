@@ -42,7 +42,7 @@ public class ControlJoystick extends JoystickView implements ControlInterface{
     private int mCurrentDirectionInt = GamepadJoystick.DIRECTION_NONE;
 
     // Directions keycode
-    private final int[] mDirectionForwardLock = new int[]{LwjglGlfwKeycode.GLFW_KEY_LEFT_CONTROL, LwjglGlfwKeycode.GLFW_KEY_W};
+    private final int[] mDirectionForwardLock = new int[]{LwjglGlfwKeycode.GLFW_KEY_W, LwjglGlfwKeycode.GLFW_KEY_LEFT_CONTROL};
     private final int[] mDirectionForward = new int[]{LwjglGlfwKeycode.GLFW_KEY_W};
     private final int[] mDirectionRight = new int[]{LwjglGlfwKeycode.GLFW_KEY_D};
     private final int[] mDirectionBackward = new int[]{LwjglGlfwKeycode.GLFW_KEY_S};
