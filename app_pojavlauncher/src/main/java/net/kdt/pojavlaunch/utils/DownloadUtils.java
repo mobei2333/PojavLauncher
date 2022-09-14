@@ -117,5 +117,31 @@ public class DownloadUtils {
         conn.disconnect();
     }
 
+    public static void downloadFileMonitoredWithHeaders(String urlInput,File outputFile, @Nullable byte[] buffer,
+                                             Tools.DownloaderFeedback monitor, String userAgent, String cookies) throws IOException {
+        if (!outputFile.exists()) {
+            outputFile.getParentFile().mkdirs();
+        }
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(urlInput).openConnection();
+        conn.setRequestProperty("User-Agent", userAgent);
+        conn.setRequestProperty("Cookies", cookies);
+        InputStream readStr = conn.getInputStream();
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        int cur;
+        int oval = 0;
+        int len = conn.getContentLength();
+
+        if(buffer == null) buffer = new byte[65535];
+
+        while ((cur = readStr.read(buffer)) != -1) {
+            oval += cur;
+            fos.write(buffer, 0, cur);
+            monitor.updateProgress(oval, len);
+        }
+        fos.close();
+        conn.disconnect();
+    }
+
 }
 

@@ -20,16 +20,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.kdt.mcgui.ProgressLayout;
 import com.kdt.mcgui.mcAccountSpinner;
 
+import net.kdt.pojavlaunch.fragments.CurseModpackInstallerFragment;
 import net.kdt.pojavlaunch.fragments.LocalLoginFragment;
+import net.kdt.pojavlaunch.fragments.MainMenuFragment;
 import net.kdt.pojavlaunch.fragments.MicrosoftLoginFragment;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.extra.ExtraListener;
 import net.kdt.pojavlaunch.fragments.MojangLoginFragment;
+import net.kdt.pojavlaunch.fragments.OverrideMenuInteractionInterface;
 import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
 import net.kdt.pojavlaunch.multirt.MultiRTConfigDialog;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
@@ -54,6 +61,15 @@ public class LauncherActivity extends BaseActivity {
     private ImageButton mSettingsButton, mDeleteAccountButton;
     private ProgressLayout mProgressLayout;
 
+    /* Allows to switch from one button "type" to another */
+    private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
+        @Override
+        public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
+            mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
+                    ? R.drawable.ic_menu_settings
+                    : R.drawable.ic_menu_home));
+        }
+    };
 
     /* Listener for the back button in settings */
     private final ExtraListener<String> mBackPreferenceListener = (key, value) -> {
@@ -74,20 +90,29 @@ public class LauncherActivity extends BaseActivity {
 
     /* Listener for the settings fragment */
     private final View.OnClickListener mSettingButtonListener = v -> {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if(fragments.get(fragments.size() - 1) instanceof LauncherPreferenceFragment) return;
+        Fragment fragment = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
+        if(fragment instanceof MainMenuFragment){
+            Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, true, null);
+        } else{
+            if(fragment instanceof OverrideMenuInteractionInterface && !((OverrideMenuInteractionInterface)fragment).allowHome()){
+                Toast.makeText(this, "Wait until the task has finished", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, true, null);
+            // The setting button doubles as a home button ?
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for(int i=0; i<fragments.size(); ++i){
+                getSupportFragmentManager().popBackStackImmediate();
+            }
+        }
     };
 
     /* Listener for account deletion */
-    private final View.OnClickListener mAccountDeleteButtonListener = v -> {
-        new AlertDialog.Builder(this)
-                .setMessage(R.string.warning_remove_account)
-                .setNeutralButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.global_delete, (dialog, which) -> mAccountSpinner.removeCurrentAccount())
-                .show();
-    };
+    private final View.OnClickListener mAccountDeleteButtonListener = v -> new AlertDialog.Builder(this)
+            .setMessage(R.string.warning_remove_account)
+            .setNeutralButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.global_delete, (dialog, which) -> mAccountSpinner.removeCurrentAccount())
+            .show();
 
     private final ExtraListener<Boolean> mLaunchGameListener = (key, value) -> {
         if(mProgressLayout.hasProcesses()){
@@ -134,6 +159,8 @@ public class LauncherActivity extends BaseActivity {
         getWindow().setBackgroundDrawable(null);
         bindViews();
 
+
+
         askForStoragePermission(); // Will wait here
 
         mSettingsButton.setOnClickListener(mSettingButtonListener);
@@ -154,6 +181,13 @@ public class LauncherActivity extends BaseActivity {
 
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
+        mProgressLayout.observe(ProgressLayout.INSTALL_MODPACK);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(mFragmentCallbackListener, true);
     }
 
     @Override
@@ -162,6 +196,8 @@ public class LauncherActivity extends BaseActivity {
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.BACK_PREFERENCE, mBackPreferenceListener);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.SELECT_AUTH_METHOD, mSelectAuthMethod);
         ExtraCore.removeExtraListenerFromValue(ExtraConstants.LAUNCH_GAME, mLaunchGameListener);
+
+        getSupportFragmentManager().unregisterFragmentLifecycleCallbacks(mFragmentCallbackListener);
     }
 
     @Override
@@ -186,6 +222,16 @@ public class LauncherActivity extends BaseActivity {
                 fragment.goBack();
                 return;
             }
+        }
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(mFragmentView.getId());
+        if(fragment instanceof OverrideMenuInteractionInterface){
+            if(((OverrideMenuInteractionInterface)fragment).allowBackButton()){
+                super.onBackPressed();
+            }else{
+                Toast.makeText(this, "Wait until the task has finished", Toast.LENGTH_LONG).show();
+            }
+            return;
         }
 
         super.onBackPressed();

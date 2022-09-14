@@ -29,6 +29,7 @@ import java.util.Arrays;
 public class ProgressLayout extends ConstraintLayout implements View.OnClickListener {
     public static final String UNPACK_RUNTIME = "unpack_runtime";
     public static final String DOWNLOAD_MINECRAFT = "download_minecraft";
+    public static final String INSTALL_MODPACK = "install_modpack";
 
     public ProgressLayout(@NonNull Context context) {
         super(context);

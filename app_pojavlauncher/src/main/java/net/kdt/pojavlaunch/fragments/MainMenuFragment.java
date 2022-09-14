@@ -29,6 +29,7 @@ public class MainMenuFragment extends Fragment {
         Button mNewsButton = view.findViewById(R.id.news_button);
         Button mCustomControlButton = view.findViewById(R.id.custom_control_button);
         Button mInstallJarButton = view.findViewById(R.id.install_jar_button);
+        Button mDownloadModpackButton = view.findViewById(R.id.download_curseforge_button);
         ImageButton mEditProfileButton = view.findViewById(R.id.edit_profile_button);
         Button mPlayButton = view.findViewById(R.id.play_button);
 
@@ -36,6 +37,7 @@ public class MainMenuFragment extends Fragment {
         mCustomControlButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
         mInstallJarButton.setOnClickListener(v -> Tools.installMod(requireActivity(), false));
         mEditProfileButton.setOnClickListener(v -> Tools.swapFragment(requireActivity(), ProfileEditorFragment.class, ProfileEditorFragment.TAG, true, null));
+        mDownloadModpackButton.setOnClickListener(v -> Tools.swapFragment(requireActivity(), CurseModpackInstallerFragment.class, CurseModpackInstallerFragment.TAG, true, null));
         mPlayButton.setOnClickListener(v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
 
     }

@@ -44,6 +44,17 @@
 		app:layout_constraintTop_toBottomOf="@id/custom_control_button"
 		/>
 
+	<com.kdt.mcgui.LauncherMenuButton
+		android:id="@+id/download_curseforge_button"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/_66sdp"
+		android:background="?android:attr/selectableItemBackground"
+
+		android:text="Download modpack"
+
+		app:layout_constraintTop_toBottomOf="@id/install_jar_button"
+		/>
+
 
 	<com.kdt.mcgui.mcVersionSpinner
 		android:id="@+id/mc_version_spinner"
