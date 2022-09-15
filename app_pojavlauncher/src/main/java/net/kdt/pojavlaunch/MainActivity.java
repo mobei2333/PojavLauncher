@@ -373,7 +373,10 @@ public class MainActivity extends BaseActivity {
             MainActivity.mControlLayout.loadLayout((CustomControls)null);
             MainActivity.mControlLayout.setModifiable(false);
             System.gc();
-            MainActivity.mControlLayout.loadLayout(LauncherPreferences.DEFAULT_PREF.getString("defaultCtrl",Tools.CTRLDEF_FILE));
+            MainActivity.mControlLayout.loadLayout(
+                    minecraftProfile.controlFile == null
+                    ? LauncherPreferences.PREF_DEFAULTCTRL_PATH
+                    : Tools.CTRLMAP_PATH + minecraftProfile.controlFile);
         } catch (IOException e) {
             Tools.showError(this,e);
         }
