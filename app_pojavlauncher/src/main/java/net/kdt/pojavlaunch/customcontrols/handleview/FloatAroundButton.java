@@ -82,9 +82,12 @@ public abstract class FloatAroundButton extends TextView implements View.OnClick
     }
 
     private int pickSide(){
+        if(mFollowedView == null) return mSide; //Value should not matter
+
         if(mSide != SIDE_AUTO) return mSide;
         //TODO improve the "algo"
         ViewGroup parent = ((ViewGroup) mFollowedView.getParent());
+        if(parent == null) return mSide;//Value should not matter
 
         int side = mFollowedView.getX() + getWidth()/2f > parent.getWidth()/2f
                 ? SIDE_LEFT

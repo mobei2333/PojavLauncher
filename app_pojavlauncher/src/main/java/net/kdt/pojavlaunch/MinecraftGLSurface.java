@@ -202,6 +202,10 @@ public class MinecraftGLSurface extends View {
      */
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        // Kinda need to send this back to the layout
+        if(((ControlLayout)getParent()).getModifiable()) return false;
+
+
         // Looking for a mouse to handle, won't have an effect if no mouse exists.
         for (int i = 0; i < e.getPointerCount(); i++) {
             if(e.getToolType(i) != MotionEvent.TOOL_TYPE_MOUSE && e.getToolType(i) != MotionEvent.TOOL_TYPE_STYLUS ) continue;

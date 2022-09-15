@@ -222,13 +222,13 @@ public class ControlLayout extends FrameLayout {
 	}
 	
 	public void setModifiable(boolean isModifiable) {
-		mModifiable = isModifiable;
-
-		if(mModifiable){
+		if(isModifiable){
 			addView(deleteButton);
 			addView(cloneButton);
 			addView(addSubButton);
 		}else {
+			if(mModifiable)
+				removeEditWindow();
 			removeView(deleteButton);
 			removeView(cloneButton);
 			removeView(addSubButton);
@@ -238,6 +238,7 @@ public class ControlLayout extends FrameLayout {
 			if (!isModifiable)
 				button.getControlView().setAlpha(button.getProperties().opacity);
 		}
+		mModifiable = isModifiable;
 	}
 
 	public boolean getModifiable(){
