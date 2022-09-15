@@ -84,10 +84,11 @@ public class mcVersionSpinner extends ExtendedTextView {
         if(extra_value != null){
             profileIndex = extra_value.equals(DELETED_PROFILE) ? 0
                     : getProfileAdapter().resolveProfileIndex(extra_value);
-        }else {
-            profileIndex = mProfileAdapter.resolveProfileIndex(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
-        }
-        if (profileIndex >= 0) setSelection(profileIndex);
+        }else
+            profileIndex = mProfileAdapter.resolveProfileIndex(
+                    LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE,""));
+
+        setProfileSelection(Math.max(0,profileIndex));
 
         // Popup window behavior
         setOnClickListener(new OnClickListener() {
