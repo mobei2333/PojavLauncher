@@ -225,4 +225,8 @@ public class ControlButton extends TextView implements ControlInterface {
         }
     }
 
+    @Override
+    public boolean hasOverlappingRendering() {
+        return false;
+    }
 }
