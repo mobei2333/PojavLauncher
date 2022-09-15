@@ -13,6 +13,8 @@ import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Process;
+import android.system.Os;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.InputDevice;
@@ -623,7 +625,7 @@ public class MinecraftGLSurface extends View {
 
         JREUtils.setupBridgeWindow(surface);
 
-        new Thread(() -> {
+        Thread t = new Thread(() -> {
             try {
                 Thread.sleep(200);
                 if(mSurfaceReadyListener != null){
@@ -632,7 +634,9 @@ public class MinecraftGLSurface extends View {
             } catch (Throwable e) {
                 Tools.showError(getContext(), e, true);
             }
-        }, "JVM Main thread").start();
+        }, "JVM Main thread");
+        t.start();
+        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST);
     }
 
     /** A small interface called when the listener is ready for the first time */
