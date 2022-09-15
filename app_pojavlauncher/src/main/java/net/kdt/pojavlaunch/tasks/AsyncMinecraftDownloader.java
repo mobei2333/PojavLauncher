@@ -222,7 +222,7 @@ public class AsyncMinecraftDownloader {
         AtomicBoolean localInterrupt = new AtomicBoolean(false);
 
         File objectsDir = new File(outputDir, "objects");
-        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0);
+        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.mcl_launch_downloading, "assets");
 
         for(String assetKey : assetsObjects.keySet()) {
             JAssetInfo asset = assetsObjects.get(assetKey);
@@ -258,7 +258,8 @@ public class AsyncMinecraftDownloader {
             Log.i("AsyncMcDownloader","Queue size: " + workQueue.size());
             while ((!executor.awaitTermination(1000, TimeUnit.MILLISECONDS))&&(!localInterrupt.get()) /*&&mActivity.mIsAssetsProcessing*/) {
                 int DLSize = downloadedSize.get();
-                 ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, (int) Math.max((float) DLSize/assetsSizeBytes*100, 0));
+                 ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT,(int) Math.max((float) DLSize/assetsSizeBytes*100, 0),
+                         R.string.mcl_launch_downloading, "assets");
             }
 
 
