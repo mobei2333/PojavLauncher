@@ -293,6 +293,7 @@ public class JREUtils {
         purgeArg(userArgs,"-Xmx");
         purgeArg(userArgs,"-d32");
         purgeArg(userArgs,"-d64");
+        purgeArg(userArgs, "-Xint");
         purgeArg(userArgs, "-Dorg.lwjgl.opengl.libname");
 
         //Add automatically generated args
