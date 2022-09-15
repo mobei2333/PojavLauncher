@@ -66,8 +66,7 @@ public class LauncherActivity extends BaseActivity {
         @Override
         public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
             mSettingsButton.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), f instanceof MainMenuFragment
-                    ? R.drawable.ic_menu_settings
-                    : R.drawable.ic_menu_home));
+                    ? R.drawable.ic_menu_settings : R.drawable.ic_menu_home));
         }
     };
 
@@ -99,9 +98,8 @@ public class LauncherActivity extends BaseActivity {
                 return;
             }
 
-            // The setting button doubles as a home button ?
-            List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            for(int i=0; i<fragments.size(); ++i){
+            // The setting button doubles as a home button now
+            while(!(getSupportFragmentManager().findFragmentById(mFragmentView.getId()) instanceof MainMenuFragment)){
                 getSupportFragmentManager().popBackStackImmediate();
             }
         }
@@ -158,8 +156,6 @@ public class LauncherActivity extends BaseActivity {
         setContentView(R.layout.activity_pojav_launcher);
         getWindow().setBackgroundDrawable(null);
         bindViews();
-
-
 
         askForStoragePermission(); // Will wait here
 
@@ -293,8 +289,7 @@ public class LauncherActivity extends BaseActivity {
                 result2 == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestStoragePermission()
-    {
+    private void requestStoragePermission() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_REQUEST_CODE);
     }
