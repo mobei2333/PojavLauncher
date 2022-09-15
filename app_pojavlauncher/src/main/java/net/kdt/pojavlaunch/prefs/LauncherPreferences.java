@@ -10,10 +10,6 @@ public class LauncherPreferences {
     public static SharedPreferences DEFAULT_PREF;
     public static String PREF_RENDERER = "opengles2";
 
-	public static boolean PREF_VERTYPE_RELEASE = true;
-	public static boolean PREF_VERTYPE_SNAPSHOT = false;
-	public static boolean PREF_VERTYPE_OLDALPHA = false;
-	public static boolean PREF_VERTYPE_OLDBETA = false;
 	public static boolean PREF_HIDE_SIDEBAR = false;
 	public static boolean PREF_IGNORE_NOTCH = false;
 	public static int PREF_NOTCH_SIZE = 0;
@@ -32,10 +28,9 @@ public class LauncherPreferences {
     public static int PREF_CONTROL_RIGHT_OFFSET = 0;
     public static int PREF_CONTROL_BOTTOM_OFFSET = 0;
     public static int PREF_CONTROL_LEFT_OFFSET = 0;
-    public static boolean PREF_SUSTAINED_PERFORMANCE = false;
     public static boolean PREF_VIRTUAL_MOUSE_START = false;
     public static boolean PREF_ARC_CAPES = false;
-    public static boolean PREF_USE_ALTERNATE_SURFACE = true;
+    public static boolean PREF_ENERGY_SAVER = true;
     public static int PREF_SCALE_FACTOR = 100;
     public static boolean PREF_FORCE_ENGLISH = false;
 
@@ -51,10 +46,6 @@ public class LauncherPreferences {
 		PREF_MOUSESPEED = ((float)DEFAULT_PREF.getInt("mousespeed",100))/100f;
 		PREF_HIDE_SIDEBAR = DEFAULT_PREF.getBoolean("hideSidebar", false);
 		PREF_IGNORE_NOTCH = DEFAULT_PREF.getBoolean("ignoreNotch", false);
-		PREF_VERTYPE_RELEASE = DEFAULT_PREF.getBoolean("vertype_release", true);
-		PREF_VERTYPE_SNAPSHOT = DEFAULT_PREF.getBoolean("vertype_snapshot", false);
-		PREF_VERTYPE_OLDALPHA = DEFAULT_PREF.getBoolean("vertype_oldalpha", false);
-		PREF_VERTYPE_OLDBETA = DEFAULT_PREF.getBoolean("vertype_oldbeta", false);
 		PREF_LONGPRESS_TRIGGER = DEFAULT_PREF.getInt("timeLongPressTrigger", 300);
 		PREF_DEFAULTCTRL_PATH = DEFAULT_PREF.getString("defaultCtrl", Tools.CTRLDEF_FILE);
         PREF_FORCE_ENGLISH = DEFAULT_PREF.getBoolean("force_english", false);
@@ -66,10 +57,9 @@ public class LauncherPreferences {
         PREF_CONTROL_RIGHT_OFFSET = DEFAULT_PREF.getInt("controlRightOffset", 0);
         PREF_CONTROL_BOTTOM_OFFSET = DEFAULT_PREF.getInt("controlBottomOffset", 0);
         PREF_CONTROL_LEFT_OFFSET = DEFAULT_PREF.getInt("controlLeftOffset", 0);
-        PREF_SUSTAINED_PERFORMANCE = DEFAULT_PREF.getBoolean("sustainedPerformance", false);
         PREF_VIRTUAL_MOUSE_START = DEFAULT_PREF.getBoolean("mouse_start", false);
         PREF_ARC_CAPES = DEFAULT_PREF.getBoolean("arc_capes",false);
-        PREF_USE_ALTERNATE_SURFACE = DEFAULT_PREF.getBoolean("alternate_surface", false);
+        PREF_ENERGY_SAVER = DEFAULT_PREF.getBoolean("energy_saver_mode", true);
         PREF_SCALE_FACTOR = DEFAULT_PREF.getInt("resolutionRatio", 100);
 
 /*

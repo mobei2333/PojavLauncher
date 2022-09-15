@@ -1,6 +1,7 @@
 package net.kdt.pojavlaunch;
 
 import static net.kdt.pojavlaunch.MainActivity.touchCharInput;
+import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_ENERGY_SAVER;
 import static net.kdt.pojavlaunch.utils.MCOptionUtils.getMcScale;
 import static org.lwjgl.glfw.CallbackBridge.sendKeyPress;
 import static org.lwjgl.glfw.CallbackBridge.sendMouseButton;
@@ -30,6 +31,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+
+import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.utils.MathUtils;
 
 import net.kdt.pojavlaunch.customcontrols.gamepad.Gamepad;
@@ -136,7 +139,8 @@ public class MinecraftGLSurface extends View {
         mPointerDebugTextView.setVisibility(GONE);
         ((ViewGroup)getParent()).addView(mPointerDebugTextView);
 
-        if(LauncherPreferences.PREF_USE_ALTERNATE_SURFACE){
+        if(PREF_ENERGY_SAVER){
+            // The surface view poses less of a threat for components.
             SurfaceView surfaceView = new SurfaceView(getContext());
             mSurface = surfaceView;
 
@@ -597,7 +601,7 @@ public class MinecraftGLSurface extends View {
     public void refreshSize(){
         windowWidth = Tools.getDisplayFriendlyRes(Tools.currentDisplayMetrics.widthPixels, mScaleFactor);
         windowHeight = Tools.getDisplayFriendlyRes(Tools.currentDisplayMetrics.heightPixels, mScaleFactor);
-        if(LauncherPreferences.PREF_USE_ALTERNATE_SURFACE){
+        if(PREF_ENERGY_SAVER){
             SurfaceView view = (SurfaceView) mSurface;
             if(view.getHolder() != null){
                 view.getHolder().setFixedSize(windowWidth, windowHeight);

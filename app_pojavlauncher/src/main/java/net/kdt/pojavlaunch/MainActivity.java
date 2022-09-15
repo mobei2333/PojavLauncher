@@ -3,7 +3,7 @@ package net.kdt.pojavlaunch;
 import static net.kdt.pojavlaunch.Architecture.ARCH_X86;
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF;
-import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_SUSTAINED_PERFORMANCE;
+import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_ENERGY_SAVER;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_VIRTUAL_MOUSE_START;
 
 import static org.lwjgl.glfw.CallbackBridge.sendKeyPress;
@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity {
 
         // Set the sustained performance mode for available APIs
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            getWindow().setSustainedPerformanceMode(PREF_SUSTAINED_PERFORMANCE);
+            getWindow().setSustainedPerformanceMode(PREF_ENERGY_SAVER);
 
         ingameControlsEditorArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu_customcontrol));
@@ -303,6 +303,7 @@ public class MainActivity extends BaseActivity {
 
 
         JREUtils.redirectAndPrintJRELog();
+
             LauncherProfiles.update();
             Tools.launchMinecraft(this, mProfile, minecraftProfile);
     }

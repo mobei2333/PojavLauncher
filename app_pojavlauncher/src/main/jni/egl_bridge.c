@@ -1117,11 +1117,16 @@ Java_org_lwjgl_opengl_GL_getNativeWidthHeight(JNIEnv *env, jobject thiz) {
     (*env)->SetIntArrayRegion(env,ret,0,2,arr);
     return ret;
 }
+
+
 void pojavSwapInterval(int interval) {
     switch (config_renderer) {
         case RENDERER_GL4ES:
         case RENDERER_VIRGL: {
-            eglSwapInterval_p(potatoBridge.eglDisplay, interval);
+            char *overrideSwapInterval = getenv("OVERRIDE_SWAP_INTERVAL");
+            int finalInterval = strcmp(overrideSwapInterval, "1") == 0 ? 1 : interval;
+
+            eglSwapInterval_p(potatoBridge.eglDisplay, finalInterval);
         } break;
 
         case RENDERER_VK_ZINK: {

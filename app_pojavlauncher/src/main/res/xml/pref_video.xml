@@ -32,11 +32,11 @@
             android:icon="@drawable/ic_setting_screen_resolution"
             />
 
-        <androidx.preference.SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="alternate_surface"
-            android:summary="@string/mcl_setting_subtitle_use_surface_view"
-            android:title="@string/mcl_setting_title_use_surface_view"
-             />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="energy_saver_mode"
+            android:title="Energy saver mode"
+            android:summary=" [WIP] When on, reduces heat generation. May reduce max performance"
+            />
     </PreferenceCategory>
 </PreferenceScreen>
