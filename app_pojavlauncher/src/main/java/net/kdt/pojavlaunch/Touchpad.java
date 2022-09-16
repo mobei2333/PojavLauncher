@@ -136,9 +136,6 @@ public class Touchpad extends FrameLayout {
                 break;
         }
 
-        //debugText.setText(CallbackBridge.DEBUG_STRING.toString());
-        CallbackBridge.DEBUG_STRING.setLength(0);
-
         return true;
     }
 
