@@ -54,16 +54,11 @@
             /> -->
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="Other">
-
-        <SwitchPreference
-            android:title="Force language to english"
-            android:key="force_english"
-            android:switchTextOff="The language is set to your device language"
-            android:switchTextOn="The language is set to english"
-            />
-    </PreferenceCategory>
+    <SwitchPreference
+        android:title="@string/preference_force_english_title"
+        android:key="force_english"
+        android:summary="@string/preference_force_english_description"
+        />
 
 
 

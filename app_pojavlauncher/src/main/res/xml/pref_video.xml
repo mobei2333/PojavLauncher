@@ -35,8 +35,8 @@
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="energy_saver_mode"
-            android:title="Energy saver mode"
-            android:summary=" [WIP] When on, reduces heat generation. May reduce max performance"
+            android:title="@string/preference_energy_saver_mode_title"
+            android:summary="@string/preference_energy_saver_mode_description"
             />
     </PreferenceCategory>
 </PreferenceScreen>
