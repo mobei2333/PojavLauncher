@@ -97,7 +97,7 @@ public class CurseModpackInstaller {
                             (curr, max) -> ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK,  (int) Math.max((float)curr/max*100,0), R.string.mcl_launch_downloading,"main modpack file"));
 
                     // unzip the modpack file
-                    ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, "Unzipping modpack file");
+                    ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_unpacking, "modpackdata.zip");
                     FileUtils.unzip(Tools.DIR_DATA + "/modpack_data.zip", mOutputFolder);
                     //TODO report unzipping progress
 
@@ -151,10 +151,9 @@ public class CurseModpackInstaller {
 
             try(OutputStream os = con.getOutputStream()) {
                 os.write(input, 0, input.length);
-                os.close();
             }
 
-            int responseCode = con.getResponseCode();
+            //int responseCode = con.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuilder response = new StringBuilder();
